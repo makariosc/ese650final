@@ -13,6 +13,8 @@ class MCNode(abc.ABC):
         #Saves the board state.
         self.state = state
 
+        self.pActs = np.array([])
+
         #Saves the node's parent and the action the parent took to reach this node. Useful for backpropogation.
         # self.pAct = pAct
         # self.parent = parent
@@ -28,6 +30,7 @@ class MCNode(abc.ABC):
 
 
     def createChildren(self, pActs):
+        self.pActs = pActs
         pActIdxs = np.where(pActs)
         for moveIndex in pActIdxs:
             move = idxToMove(moveIndex)
@@ -47,7 +50,7 @@ class Action:
         self.W = 0
         self.Q = 0
 
-        self.child = child
+        self.nextState = child
 
 
     

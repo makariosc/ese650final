@@ -17,87 +17,47 @@ class MCTS:
 
     #Initializes by starting a game from the beginning.
     def __init__(self):
-        self.game = cg.ChessGame()
-
         #Intializes a root with empty parents.
-        self.root = mc.MCNode(self.game.get_board(), None, None)
+        self.root = mc.MCNode(self.game.get_board())
 
-    #Setting it to random expansion for now. Early iterations can be random but later ones will need PUCT. Selection assumes that this node has children.
-    def select(self,node):
+    # Picks a move from the current tree
+    def select(self, tau = 1, explore = True):
+        idxs = self.root.children.keys()
+        ns = np.array([self.root.children[i].N for i in idxs])
+        ns = ns / np.sum(ns)
 
-        cur_node = node
-        #Can only run selection for nodes that have been explored.
-        while cur_node.has_children():
+        if explore:
+            ns = ns**(1 / tau)
+            nextIdx = random.choice(idxs, ns)
+        else:
+            nextIdx = np.argmax(ns)
 
-            #Just doing it randomly for now.
-            cNodes = cur_node.children()
-
-            move = random.choice(cNodes)
-
-            #Pushes the game-state forward by the move.
-            self.game.get_board().push(move)
-
-            #How should we link the nodes to their children? Another dict?
-            cur_node = cur_node.children[]
-
-
-
-
-    #Nodes that are "selected" and not "expanded" can be left without parents (parent and pAct are only used for backprop)
-
-    def expand(self):
-
-        #Picks a child. Should just be done randomly for now as a proof of concept. We'll change this later. 
-        
-        #Expansion precedes simulation, so we should be creating new boards instead of updating ours.
-
-
-        #Starts a simulation using the chosen expansion node.
-        self.simulate(child)
+        # nextIdx should be an int from 0 to 64 x 73 - 1.
+        # Use utils.idxToMove() to convert to a move.
+        return nextIdx, self.pActs
 
 
     # Expand down into the tree recursively and find a leaf node.
     # When we find the leaf node, query the NN to initialize its children.
-    def search(self, node):
+    def search(self, node, net):
 
-        #Once we reach the leaf node, begins backpropogation.
-        if node.state.is_checkmate() or node.state.is_stalemate():
-            #p, v = NN Magic
-            # set v manually depending on who won
-            p, v = 0,0
+        #Once we reach the leaf node, return the NN's assesment of the current state.
+        if node.has_children():
+            p, v = net(node.state)
 
-            #Begins backpropogation step.
-            return p, v
+            node.createChildren(p)
+            return -v
 
-        elif leaf node:
-            p, v = NN magic
-            return p, v
+        a = node.actionWithHighestValue()
+        p, v = self.search(a)
 
-        highestChild = childWithHighestValue()
-        p, w = self.search(highestChild)
+        # Backpropagation step
+        a.N += 1
+        a.W += v
+        a.Q = a.N / a.W
 
-        node.
+        return -v
 
-
-    #Backpropogation algorithm. Starts at the leaf node and moves upwards to update.
-    def backProp(self,leaf, p, v):
-
-        curNode = leaf
-        
-        #Makes sure to break when we've reached the root. Might need to update criteria (or reset the root) as the game goes on.
-        while(curNode.parent != None):
-
-            #Moves up to the parent node.
-            upNode = curNode.parent
-
-            #Updates N, W, Q, for the parent and action that led to the leaf.
-            upNode.actionDict[(curNode.pAct, 'N')] += 1
-            upNode.actionDict[(curNode.pAct, 'W')] += v 
-            upNode.actionDict[(curNode.pAct, 'Q')] = (curNode.pAct, 'W') / (curNode.pAct, 'N')
-
-            '''Don't think probability backprops the same way the rest do, unsure how to work it in.'''
-
-            curNode = upNode
         
 
 
