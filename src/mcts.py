@@ -1,5 +1,5 @@
-import ChessGame as cg
 import mcNode as mc
+import chess
 
 from collections import defaultdict
 import numpy as np 
@@ -16,9 +16,9 @@ import itertools
 class MCTS:
 
     #Initializes by starting a game from the beginning.
-    def __init__(self):
+    def __init__(self, game = chess.Board()):
         #Intializes a root with empty parents.
-        self.root = mc.MCNode(self.game.get_board())
+        self.root = mc.MCNode(game)
 
     # Picks a move from the current tree
     def select(self, tau = 1, explore = True):
@@ -34,7 +34,7 @@ class MCTS:
 
         # nextIdx should be an int from 0 to 64 x 73 - 1.
         # Use utils.idxToMove() to convert to a move.
-        return nextIdx, self.pActs
+        return nextIdx, self.root.pActs
 
 
     # Expand down into the tree recursively and find a leaf node.
@@ -42,14 +42,14 @@ class MCTS:
     def search(self, node, net):
 
         #Once we reach the leaf node, return the NN's assesment of the current state.
-        if node.has_children():
+        if not node.has_children():
             p, v = net(node.state)
 
             node.createChildren(p)
             return -v
 
         a = node.actionWithHighestValue()
-        p, v = self.search(a)
+        v = self.search(a)
 
         # Backpropagation step
         a.N += 1

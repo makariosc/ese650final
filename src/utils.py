@@ -31,6 +31,59 @@ def boardToPieceFeatures(board, player = chess.WHITE):
     # Returns a 12 x 8 x 8 array of the current board state.
     return boardState
 
+# Pieces: from the board
+# Repetitions: from the board
+
+# Color: from the board
+# Total move count: from board.fullmove_number
+# P1 castling (k, q)
+# P2 castling (k, q)
+
+# No progress count: from the board
+def makeFeatures(board):
+    # Location of the pieces on the board
+    p1pieces, p2pieces = boardToPieceFeatures(board, board.turn)
+
+    # Number of repetitions in this state
+    if board.is_repetition(1):
+        repetition = np.ones((8,8))
+    elif board.is_repetition(2):
+        repetition = np.ones((8,8)) * 2
+    elif board.is_repetition(3):
+        repetition = np.ones((8,8)) * 3
+    else:
+        repetition = np.zeros((8,8))
+
+    # Current player
+    color = np.ones((8,8)) * board.turn
+
+    # total number of moves
+    moves = np.ones((8,8)) * board.fullmove_number
+
+    # Castling rights
+    p1castlek = np.ones((8,8)) * board.has_kingside_castling_rights(chess.turn)
+    p1castleq = np.ones((8,8)) * board.has_queenside_castling_rights(chess.turn)
+
+    p2castlek = np.ones((8,8)) * board.has_kingside_castling_rights(not chess.turn)
+    p2castleq = np.ones((8,8)) * board.has_queenside_castling_rights(not chess.turn)
+
+    # No progress counter for 50-turn-move
+    no_progress_count = np.ones((8,8)) * board.halfmove_clock
+
+    return np.stack((
+        p1pieces,
+        p2pieces,
+        repetition,
+        color,
+        moves,
+        p1castlek,
+        p1castleq,
+        p2castlek,
+        p2castleq,
+        no_progress_count
+    ))
+
+
 horseyDeltas = {
     56: (2, 1),
     57: (1, 2),
