@@ -13,21 +13,21 @@ import numpy as np
 import itertools
 
 
-class MCTS(object):
+class MCTS:
 
     #Initializes by starting a game from the beginning.
     def __init__(self):
         self.game = cg.ChessGame()
 
         #Intializes a root with empty parents.
-        self.root = mc.mcNode(self.game.get_board(), None, None)
+        self.root = mc.MCNode(self.game.get_board(), None, None)
 
     #Setting it to random expansion for now. Early iterations can be random but later ones will need PUCT. Selection assumes that this node has children.
     def select(self,node):
 
         cur_node = node
         #Can only run selection for nodes that have been explored.
-        while(cur_node.has_children() == True):
+        while cur_node.has_children():
 
             #Just doing it randomly for now.
             cNodes = cur_node.children()
@@ -55,21 +55,28 @@ class MCTS(object):
         #Starts a simulation using the chosen expansion node.
         self.simulate(child)
 
-    def simulate(self,node):
+
+    # Expand down into the tree recursively and find a leaf node.
+    # When we find the leaf node, query the NN to initialize its children.
+    def search(self, node):
 
         #Once we reach the leaf node, begins backpropogation.
-        if (node.state.is_checkmate() == True or node.state.is_stalemate() == True):
+        if node.state.is_checkmate() or node.state.is_stalemate():
             #p, v = NN Magic
+            # set v manually depending on who won
             p, v = 0,0
 
             #Begins backpropogation step.
-            self.backProp(node, p, v)
+            return p, v
 
-        #If we're not in the backprop phase, we keep going.
+        elif leaf node:
+            p, v = NN magic
+            return p, v
 
-        #TODO: The keep going part
-        else:
-            print('I put this here so python wouldnt give me a syntax error')
+        highestChild = childWithHighestValue()
+        p, w = self.search(highestChild)
+
+        node.
 
 
     #Backpropogation algorithm. Starts at the leaf node and moves upwards to update.
