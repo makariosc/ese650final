@@ -42,7 +42,7 @@ class ChessGame(object):
         self.move(theMove)
 
         # Add the move to our training examples
-        self.moves[chess.currPlayer].append([utils.getFeatures(self.board), pi, 0])
+        self.moves[chess.currPlayer].append([utils.makeFeatures(self.board), pi, 0])
 
 
     def move(self, move):
