@@ -23,7 +23,7 @@ class ChessGame(object):
         return self.board
 
     def legal(self):
-        return list(self.board.legal_moves )
+        return list(self.board.legal_moves)
 
     def selectMove(self, iterations = 100):
 
