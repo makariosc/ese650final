@@ -18,13 +18,17 @@ if __name__=="__main__":
     # model.load_state_dict(torch.load(PATH))
     # model.eval()
     
-    path = 'currentNN.pt'  # whatever the current best model is saved as
+    
+    ## loading a previously saved model
+    # path = 'currentNN.pt'  # whatever the current best model is saved as
+    
+    # model = ChessNet()
+    # model.load_state_dict(torch.load(path))
+    # model.eval() # make sure model doesn't change
+    
+    num_games = 25000 # used later
     
     model = ChessNet()
-    model.load_state_dict(torch.load(path))
-    model.eval() # make sure model doesn't change
-    
-    num_games = 25000
     
     game = ChessGame(model, model)
     data = game.gameLoop()
