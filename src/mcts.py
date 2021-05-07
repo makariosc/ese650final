@@ -4,7 +4,7 @@ import utils
 
 from collections import defaultdict
 import numpy as np 
-import torch as th
+import torch
 
 import math
 import queue
@@ -48,7 +48,7 @@ class MCTS:
 
             # Get the features and upload them to the nn
             stateFeatures = utils.makeFeatures(node.state)
-            p, v = net(stateFeatures)
+            p, v = net(torch.tensor(stateFeatures))
 
             p = utils.normalizeMPV(p, node.state)
 

@@ -42,7 +42,13 @@ class ConvBlock(nn.Module):
     def forward(self, s):
         # TODO: CHANGE DIMENSION ACCORDING TO OUTPUT OF FEN CONVERSION
         s = s.view(-1, 20, 8, 8)  # batch_size x channels x board_x x board_y
-        s = F.relu(self.bn1(self.conv1(s)))
+        # s = torch.tensor(s)
+        s = self.conv1(s.float())
+        s = self.bn1(s)
+        s = F.relu(s)
+        
+        
+        # s = F.relu(self.bn1(self.conv1(s)))
         return s
 
 class ResBlock(nn.Module):
@@ -93,7 +99,7 @@ class OutBlock(nn.Module):
         v = F.relu(self.bn(self.conv(s))) # value head
         v = v.view(-1, 8*8)  # batch_size X channel X height X width
         v = F.relu(self.fc1(v))
-        v = F.tanh(self.fc2(v))
+        v = torch.tanh(self.fc2(v))
         
         p = F.relu(self.bn1(self.conv1(s))) # policy head
         p = p.view(-1, 8*8*128)

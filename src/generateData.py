@@ -32,3 +32,7 @@ if __name__=="__main__":
     
     game = ChessGame(model, model)
     data = game.gameLoop()
+    
+    
+    # store data from each game state during the game to something (a list?)
+    # save this to some file
