@@ -61,11 +61,11 @@ def makeFeatures(board):
     moves = np.ones((8,8)) * board.fullmove_number
 
     # Castling rights
-    p1castlek = np.ones((8,8)) * board.has_kingside_castling_rights(chess.turn)
-    p1castleq = np.ones((8,8)) * board.has_queenside_castling_rights(chess.turn)
+    p1castlek = np.ones((8,8)) * board.has_kingside_castling_rights(board.turn)
+    p1castleq = np.ones((8,8)) * board.has_queenside_castling_rights(board.turn)
 
-    p2castlek = np.ones((8,8)) * board.has_kingside_castling_rights(not chess.turn)
-    p2castleq = np.ones((8,8)) * board.has_queenside_castling_rights(not chess.turn)
+    p2castlek = np.ones((8,8)) * board.has_kingside_castling_rights(not board.turn)
+    p2castleq = np.ones((8,8)) * board.has_queenside_castling_rights(not board.turn)
 
     # No progress counter for 50-turn-move
     no_progress_count = np.ones((8,8)) * board.halfmove_clock
@@ -125,11 +125,11 @@ def idxToMove(i):
         dR, dF = toSquareIdx % 7 + 1, -(toSquareIdx % 7 + 1)
 
     # Horsey moves
-    elif 56 <= toSquareIdx < 63:
+    elif 56 <= toSquareIdx < 64:
         dR, dF = horseyDeltas[toSquareIdx]
 
     # Pawn underpromotion moves
-    elif 63 <= toSquareIdx < 67:
+    elif 64 <= toSquareIdx < 67:
         dR, dF = 1, -1
         promotion = toSquareIdx % 63 + 2
     elif 67 <= toSquareIdx < 70:
@@ -175,7 +175,7 @@ def moveIdx(m):
         idx = 61
     elif dR == 1 and dF == -2:
         idx = 62
-    elif dR == 2 and dR == -1:
+    elif dR == 2 and dF == -1:
         idx = 63
 
     # Pawn underpromotions
@@ -225,9 +225,3 @@ def normalizeMPV(mv, board):
     maskedMV = mask * mv
 
     return maskedMV / np.linalg.norm(maskedMV)
-
-
-
-
-
-

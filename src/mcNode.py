@@ -5,7 +5,7 @@ import abc
 from utils import *
 from copy import deepcopy
 
-class MCNode(abc.ABC):
+class MCNode:
 
     #Initializes the node.
     def __init__(self, state):
@@ -15,26 +15,19 @@ class MCNode(abc.ABC):
 
         self.pActs = np.array([])
 
-        #Saves the node's parent and the action the parent took to reach this node. Useful for backpropogation.
-        # self.pAct = pAct
-        # self.parent = parent
-
         #Initializes a default dictionary to save the values of "edges" (i.e. state/action pairs) important to this node.
         self.actionDict = collections.Counter()
 
         # Dictionary mapping move indices (see utils moveToIdx) to Children nodes and action probabilities.
         self.children = {}
 
-        # Something like this. Runs some sort of list of possible child states on node initialization.
-        self.PotentialChildren = list(self.state.legal_moves)
-
-
     def createChildren(self, pActs):
         self.pActs = pActs
-        pActIdxs = np.where(pActs)
+        pActIdxs = np.where(pActs)[0]
         for moveIndex in pActIdxs:
             move = idxToMove(moveIndex)
-            self.children[moveIndex] = Action(MCNode(deepcopy(self.state).push(move)), pActs[moveIndex])
+            self.children[moveIndex] = Action(MCNode(deepcopy(self.state)), pActs[moveIndex])
+            self.children[moveIndex].nextState.state.push(move)
 
     #Checks to see if the node is unexpanded (NOTE: Different from terminal nodes. No children in this case implies unexpanded children.)
     def has_children(self):
@@ -66,6 +59,7 @@ class MCNode(abc.ABC):
         bestEdge = self.children[bestAct]
 
         return bestEdge.nextState
+
 class Action:
     def __init__(self, child, P):
         self.P = P
