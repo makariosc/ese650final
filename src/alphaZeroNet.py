@@ -36,12 +36,12 @@ class ConvBlock(nn.Module):
         super(ConvBlock, self).__init__()
         # XXX unused action_size object
         self.action_size = 8*8*73 
-        self.conv1 = nn.Conv2d(22, 256, 3, stride=1, padding=1)
+        self.conv1 = nn.Conv2d(20, 256, 3, stride=1, padding=1)
         self.bn1 = nn.BatchNorm2d(256)
 
     def forward(self, s):
         # TODO: CHANGE DIMENSION ACCORDING TO OUTPUT OF FEN CONVERSION
-        s = s.view(-1, 22, 8, 8)  # batch_size x channels x board_x x board_y
+        s = s.view(-1, 20, 8, 8)  # batch_size x channels x board_x x board_y
         s = F.relu(self.bn1(self.conv1(s)))
         return s
 
