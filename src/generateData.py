@@ -61,5 +61,7 @@ if __name__=="__main__":
     dataset += data[0]
     dataset += data[1]
     
+    # train(model, dataset)
+    
     # store data from each game state during the game to something (a list?)
     # save this to some file
