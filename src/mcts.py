@@ -45,7 +45,10 @@ class MCTS:
 
         #Once we reach the leaf node, return the NN's assesment of the current state.
         if not node.has_children():
-            p, v = net(node.state)
+
+            # Get the features and upload them to the nn
+            stateFeatures = utils.makeFeatures(node.state)
+            p, v = net(stateFeatures)
 
             p = utils.normalizeMPV(p, node.state)
 

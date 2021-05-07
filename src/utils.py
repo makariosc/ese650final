@@ -42,7 +42,7 @@ def boardToPieceFeatures(board, player = chess.WHITE):
 # No progress count: from the board
 def makeFeatures(board):
     # Location of the pieces on the board
-    p1pieces, p2pieces = boardToPieceFeatures(board, board.turn)
+    pieceFeatures = boardToPieceFeatures(board, board.turn)
 
     # Number of repetitions in this state
     if board.is_repetition(1):
@@ -70,9 +70,7 @@ def makeFeatures(board):
     # No progress counter for 50-turn-move
     no_progress_count = np.ones((8,8)) * board.halfmove_clock
 
-    return np.stack((
-        p1pieces,
-        p2pieces,
+    otherFeatures = np.stack((
         repetition,
         color,
         moves,
@@ -82,6 +80,8 @@ def makeFeatures(board):
         p2castleq,
         no_progress_count
     ))
+
+    return np.append(pieceFeatures, otherFeatures, axis=0)
 
 
 horseyDeltas = {
