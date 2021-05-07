@@ -1,5 +1,6 @@
 import mcNode as mc
 import chess
+import utils
 
 from collections import defaultdict
 import numpy as np 
@@ -44,6 +45,8 @@ class MCTS:
         #Once we reach the leaf node, return the NN's assesment of the current state.
         if not node.has_children():
             p, v = net(node.state)
+
+            p = utils.normalizeMPV(p, node.state)
 
             node.createChildren(p)
             return -v
