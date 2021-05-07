@@ -27,3 +27,4 @@ if __name__=="__main__":
     num_games = 25000
     
     game = ChessGame(model, model)
+    data = game.gameLoop()
