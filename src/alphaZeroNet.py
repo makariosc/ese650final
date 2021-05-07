@@ -1,3 +1,8 @@
+# THIS FILE TAKEN FROM https://github.com/geochri/AlphaZero_Chess
+# LARGE PARTS OF THIS FILE ARE DIRECTLY FROM THE ABOVE LINK
+# We have customized this file to work directly with our own implementation.
+# We do not plan on selling, commercializing, yadda legal yadda any part of this code.
+
 #!/usr/bin/env python
 import torch
 import torch.nn as nn
