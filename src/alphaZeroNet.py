@@ -151,8 +151,12 @@ def train(net, dataset, epoch_start=0, epoch_stop=20, cpu=0):
     optimizer = optim.Adam(net.parameters(), lr=3e-3)
     scheduler = optim.lr_scheduler.MultiStepLR(optimizer, milestones=[100,200,300,400], gamma=0.2)
     
-    train_set = board_data(dataset)
-    train_loader = DataLoader(train_set, batch_size=30, shuffle=True, num_workers=0, pin_memory=False)
+    
+    # TODO: convert gameLoop() data to proper format for training
+    
+    # train_set = board_data(dataset)
+    # train_loader = DataLoader(train_set, batch_size=30, shuffle=True, num_workers=0, pin_memory=False)
+    train_loader = DataLoader(dataset, batch_size=30, shuffle=True, num_workers=0, pin_memory=False)
     losses_per_epoch = []
     for epoch in range(epoch_start, epoch_stop):
         scheduler.step()
@@ -170,7 +174,7 @@ def train(net, dataset, epoch_start=0, epoch_stop=20, cpu=0):
             total_loss += loss.item()
             if i % 10 == 9:    # print every 10 mini-batches of size = batch_size
                 print('Process ID: %d [Epoch: %d, %5d/ %d points] total loss per batch: %.3f' %
-                      (os.getpid(), epoch + 1, (i + 1)*30, len(train_set), total_loss/10))
+                      (os.getpid(), epoch + 1, (i + 1)*30, len(dataset), total_loss/10))
                 print("Policy:",policy[0].argmax().item(),policy_pred[0].argmax().item())
                 print("Value:",value[0].item(),value_pred[0,0].item())
                 losses_per_batch.append(total_loss/10)

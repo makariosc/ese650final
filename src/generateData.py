@@ -9,7 +9,30 @@ from ChessGame import ChessGame
 # uses MCTS to select a move
 # at each move, store: game state, search probs from MCTS, who won game (add after game ends)
 
+def selfPlay(num_games = 10000):
+    """
+    function runs best current player to generate dataset
+
+    Parameters
+    ----------
+    num_games : TYPE, optional
+        DESCRIPTION. The default is 10000.
+
+    Returns
+    -------
+    None.
+
+    """
+    num_games = num_games
+    
+    pass
+    
+
 if __name__=="__main__":
+    """
+    debugging purposes
+    """
+    
     print('poop')
     # need to load best current model
     # should be saved from torch.save(model.state_dict(), PATH)
@@ -26,6 +49,8 @@ if __name__=="__main__":
     # model.load_state_dict(torch.load(path))
     # model.eval() # make sure model doesn't change
     
+    dataset = []
+    
     num_games = 25000 # used later
     
     model = ChessNet()
@@ -33,6 +58,8 @@ if __name__=="__main__":
     game = ChessGame(model, model)
     data = game.gameLoop()
     
+    dataset += data[0]
+    dataset += data[1]
     
     # store data from each game state during the game to something (a list?)
     # save this to some file
