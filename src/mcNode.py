@@ -36,7 +36,7 @@ class MCNode(abc.ABC):
             move = idxToMove(moveIndex)
             self.children[moveIndex] = Action(MCNode(deepcopy(self.state).push(move)), pActs[moveIndex])
 
-    #Checks to see if the node is terminal.
+    #Checks to see if the node is unexpanded (NOTE: Different from terminal nodes. No children in this case implies unexpanded children.)
     def has_children(self):
         return len(self.children) > 0
 
@@ -66,13 +66,6 @@ class MCNode(abc.ABC):
         bestEdge = self.children[bestAct]
 
         return bestEdge.nextState
-
-
-
-
-    #Picks a random child to expand and expands it.
-    #def select_random(self):
-
 class Action:
     def __init__(self, child, P):
         self.P = P
