@@ -26,7 +26,7 @@ class MCNode(abc.ABC):
         self.children = {}
 
         # Something like this. Runs some sort of list of possible child states on node initialization.
-        self.PotentialChildren = list(self.state.legal_moves())
+        self.PotentialChildren = list(self.state.legal_moves)
 
 
     def createChildren(self, pActs):
