@@ -40,9 +40,32 @@ class MCNode(abc.ABC):
     def has_children(self):
         return len(self.children) > 0
 
-    #Picks a random child to expand and expands it.
-    #def select_random(self):
+    #Uses PUCT to find the Best Action.
+    def bestAction(self):
+        puctList = []
 
+        #Set c to  1 (can be tuned later).
+        c = 1
+
+        #Calculates the N sum.
+        NList = [self.children[act].N for act in self.children.keys()]
+        
+        NSum = sum(NList)
+        NSum  = np.sqrt(NSum)
+
+        for acts in self.children.keys():
+            edge = self.children[acts]
+
+            U = c * edge.P * NSum / (1+edge.N)
+            Q = edge.Q
+
+            puctList.append(Q+U)
+
+        bestAct = np.argmax(puctList)
+
+        bestEdge = self.children[bestAct]
+
+        return bestEdge.nextState
 class Action:
     def __init__(self, child, P):
         self.P = P

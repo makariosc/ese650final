@@ -19,6 +19,7 @@ class MCTS:
     #Initializes by starting a game from the beginning.
     def __init__(self, game = chess.Board()):
         #Intializes a root with empty parents.
+        self.game = game
         self.root = mc.MCNode(game)
 
     # Picks a move from the current tree
@@ -29,7 +30,7 @@ class MCTS:
 
         if explore:
             ns = ns**(1 / tau)
-            nextIdx = random.choice(idxs, ns)
+            nextIdx = random.choices(idxs, ns)
         else:
             nextIdx = np.argmax(ns)
 
@@ -51,7 +52,7 @@ class MCTS:
             node.createChildren(p)
             return -v
 
-        a = node.actionWithHighestValue()
+        a = node.bestAction()
         v = self.search(a)
 
         # Backpropagation step
