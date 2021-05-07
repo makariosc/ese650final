@@ -13,7 +13,7 @@ class ChessGame(object):
         self.whiteNN = whiteNN
         self.blackNN = blackNN
 
-        self.gameTree = mcts.MCTS(self.board)
+        self.gameTree = mcts.MCTS()
 
         # Training examples
         self.moves = {chess.WHITE : [],
@@ -42,7 +42,7 @@ class ChessGame(object):
         self.move(theMove)
 
         # Add the move to our training examples
-        self.moves[self.currPlayer].append([utils.makeFeatures(self.board), pi, 0])
+        self.moves[chess.currPlayer].append([utils.makeFeatures(self.board), pi, 0])
 
 
     def move(self, move):
@@ -57,10 +57,7 @@ class ChessGame(object):
 
         elif self.board.is_checkmate():
             # 1 if White, -1 if Black
-
-            #If I understand this correctly, the "turn player" on a checkmate state is the loser. If it's black's turn and checkmate then white wins.
-            turnPlay = (self.currPlayer == chess.BLACK)
-            return True, 2*turnPlay - 1
+            return True, 2*self.board.winner() - 1
 
         else:
             return False, 0

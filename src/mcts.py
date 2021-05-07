@@ -1,5 +1,6 @@
-import ChessGame as cg
 import mcNode as mc
+import chess
+import utils
 
 from collections import defaultdict
 import numpy as np 
@@ -16,10 +17,9 @@ import itertools
 class MCTS:
 
     #Initializes by starting a game from the beginning.
-    def __init__(self, board):
+    def __init__(self, game = chess.Board()):
         #Intializes a root with empty parents.
-        self.game = board
-        self.root = mc.MCNode(self.game.get_board())
+        self.root = mc.MCNode(game)
 
     # Picks a move from the current tree
     def select(self, tau = 1, explore = True):
@@ -29,7 +29,7 @@ class MCTS:
 
         if explore:
             ns = ns**(1 / tau)
-            nextIdx = random.choices(idxs, ns)
+            nextIdx = random.choice(idxs, ns)
         else:
             nextIdx = np.argmax(ns)
 
@@ -46,11 +46,13 @@ class MCTS:
         if not node.has_children():
             p, v = net(node.state)
 
+            p = utils.normalizeMPV(p, node.state)
+
             node.createChildren(p)
             return -v
 
-        a = node.bestAction()
-        p, v = self.search(a)
+        a = node.actionWithHighestValue()
+        v = self.search(a)
 
         # Backpropagation step
         a.N += 1

@@ -36,39 +36,9 @@ class MCNode(abc.ABC):
             move = idxToMove(moveIndex)
             self.children[moveIndex] = Action(MCNode(deepcopy(self.state).push(move)), pActs[moveIndex])
 
-    #Checks to see if the node is terminal.
+    #Checks to see if the node is unexpanded (NOTE: Different from terminal nodes. No children in this case implies unexpanded children.)
     def has_children(self):
         return len(self.children) > 0
-
-    #Uses PUCT to find the Best Action.
-    def bestAction(self):
-        puctList = []
-
-        #Set c to  1 (can be tuned later).
-        c = 1
-
-        #Calculates the N sum.
-        NList = [self.children[act].N for act in self.children.keys()]
-        
-        NSum = sum(NList)
-        NSum  = np.sqrt(NSum)
-
-        for acts in self.children.keys():
-            edge = self.children[acts]
-
-            U = c * edge.P * NSum / (1+edge.N)
-            Q = edge.Q
-
-            puctList.append(Q+U)
-
-        bestAct = np.argmax(puctList)
-
-        bestEdge = self.children[bestAct]
-
-        return bestEdge.nextState
-
-
-
 
     #Picks a random child to expand and expands it.
     #def select_random(self):
