@@ -162,7 +162,7 @@ def train(net, dataset, epoch_start=0, epoch_stop=20, cpu=0):
         scheduler.step()
         total_loss = 0.0
         losses_per_batch = []
-        for i,data in enumerate(train_loader,0):
+        for data in train_loader:
             state, policy, value = data
             if cuda:
                 state, policy, value = state.cuda().float(), policy.float().cuda(), value.cuda().float()
