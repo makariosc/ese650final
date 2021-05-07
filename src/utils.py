@@ -97,7 +97,7 @@ horseyDeltas = {
 
 # Given an int from 0 to 64 x 73
 # Return the associated move object
-def idxToMove(i):
+def idxToMove(i, board):
     fromSquare = i // 73
     toSquareIdx = i % 73
 
@@ -105,6 +105,14 @@ def idxToMove(i):
     fromFile = chess.square_file(fromSquare)
 
     promotion = None
+
+    if board.turn == chess.WHITE:
+        promotionRank = 7
+    else:
+        promotionRank = 2
+
+    if board.piece_at(fromSquare).piece_type == chess.PAWN and fromRank + 1 == promotionRank:
+        promotion = chess.QUEEN
 
     # Queen moves
     if 0 <= toSquareIdx < 7:
@@ -130,13 +138,22 @@ def idxToMove(i):
 
     # Pawn underpromotion moves
     elif 64 <= toSquareIdx < 67:
-        dR, dF = 1, -1
+        if board.turn == chess.WHITE:
+            dR, dF = 1, -1
+        else:
+            dR, dF = -1, -1
         promotion = toSquareIdx % 63 + 2
     elif 67 <= toSquareIdx < 70:
-        dR, dF = 1, 0
+        if board.turn == chess.WHITE:
+            dR, dF = 1, 0
+        else:
+            dR, dF = -1, 0
         promotion = toSquareIdx % 67 + 2
     elif 70 <= toSquareIdx < 73:
-        dR, dF = 1, 1
+        if board.turn == chess.WHITE:
+            dR, dF = 1, 1
+        else:
+            dR, dF = -1, 1
         promotion = toSquareIdx % 70 + 2
     else:
         print("CRASHING")
@@ -179,7 +196,7 @@ def moveIdx(m):
         idx = 63
 
     # Pawn underpromotions
-    elif m.promotion is not None:
+    elif m.promotion is not None and m.promotion < 5:
         if dF < 0:
             idx = 64 + m.promotion - 2  # 64, 65, 66
         elif dF == 0:

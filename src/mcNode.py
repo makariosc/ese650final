@@ -25,9 +25,10 @@ class MCNode:
         self.pActs = pActs
         pActIdxs = np.where(pActs)[0]
         for moveIndex in pActIdxs:
-            move = idxToMove(moveIndex)
+            move = idxToMove(moveIndex, self.state)
             self.children[moveIndex] = Action(MCNode(deepcopy(self.state)), pActs[moveIndex])
             self.children[moveIndex].nextState.state.push(move)
+
 
     #Checks to see if the node is unexpanded (NOTE: Different from terminal nodes. No children in this case implies unexpanded children.)
     def has_children(self):
@@ -35,7 +36,7 @@ class MCNode:
 
     #Uses PUCT to find the Best Action.
     def bestAction(self):
-        puctList = []
+        puctList = {}
 
         #Set c to  1 (can be tuned later).
         c = 1
@@ -52,13 +53,13 @@ class MCNode:
             U = c * edge.P * NSum / (1+edge.N)
             Q = edge.Q
 
-            puctList.append(Q+U)
+            puctList[acts] = Q+U
 
-        bestAct = np.argmax(puctList)
+        bestAct = max(puctList, key = puctList.get)
 
         bestEdge = self.children[bestAct]
 
-        return bestEdge.nextState
+        return bestEdge
 
 class Action:
     def __init__(self, child, P):

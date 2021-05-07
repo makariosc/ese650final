@@ -25,7 +25,7 @@ class ChessGame(object):
     def legal(self):
         return list(self.board.legal_moves)
 
-    def selectMove(self, iterations = 100):
+    def selectMove(self, iterations = 10):
 
         if self.currPlayer == chess.WHITE:
             currNet = self.whiteNN
@@ -36,10 +36,14 @@ class ChessGame(object):
             self.gameTree.search(self.gameTree.root, currNet)
 
         mIdx, pi = self.gameTree.select(1, True)
-        theMove = utils.idxToMove(mIdx)
-        self.gameTree = self.gameTree.children[mIdx].nextState
+        theMove = utils.idxToMove(mIdx, self.gameTree.root.state)
+        self.gameTree.root = self.gameTree.root.children[mIdx].nextState
 
         self.move(theMove)
+        print(theMove)
+
+        print("=====")
+        print(self.gameTree.root.state)
 
         # Add the move to our training examples
         self.moves[self.currPlayer].append([utils.makeFeatures(self.board), pi, 0])
@@ -61,6 +65,8 @@ class ChessGame(object):
             #If I understand this correctly, the "turn player" on a checkmate state is the loser. If it's black's turn and checkmate then white wins.
             turnPlay = (self.currPlayer == chess.BLACK)
             return True, 2*turnPlay - 1
+        elif self.board.outcome() is not None:
+            return True, 0
 
         else:
             return False, 0
@@ -73,6 +79,8 @@ class ChessGame(object):
             done, v = self.gameOver()
 
             if done:
+                print(f"TERMINATED: {self.board.outcome().termination}")
+
                 if v == 0:
                     return self.moves
                 elif v == 1:

@@ -2,7 +2,7 @@ import mcNode as mc
 import chess
 import utils
 
-from collections import defaultdict
+from collections import deque
 import numpy as np 
 import torch
 
@@ -24,13 +24,13 @@ class MCTS:
 
     # Picks a move from the current tree
     def select(self, tau = 1, explore = True):
-        idxs = self.root.children.keys()
+        idxs = list(self.root.children.keys())
         ns = np.array([self.root.children[i].N for i in idxs])
         ns = ns / np.sum(ns)
 
         if explore:
             ns = ns**(1 / tau)
-            nextIdx = random.choices(idxs, ns)
+            nextIdx = random.choices(idxs, ns)[0]
         else:
             nextIdx = np.argmax(ns)
 
@@ -43,25 +43,39 @@ class MCTS:
     # When we find the leaf node, query the NN to initialize its children.
     def search(self, node, net):
 
-        #Once we reach the leaf node, return the NN's assesment of the current state.
-        if not node.has_children():
+        stack = deque()
 
+        while node.has_children():
+            a = node.bestAction()
+            stack.append(a)
+            node = a.nextState
+
+        #Once we reach the leaf node, return the NN's assesment of the current state.
+
+        result = node.state.outcome()
+        if result is not None:
+            if result.winner is None:
+                p, v = np.ones(64 * 73), 0
+            elif result.winner == (not node.state.turn):
+                p, v = np.ones(64 * 73), -1
+            else:
+                p, v = np.ones(64 * 73), 1
+
+        else:
             # Get the features and upload them to the nn
             stateFeatures = utils.makeFeatures(node.state)
-            p, v = net(torch.tensor(stateFeatures))
+            p, v = np.ones(64 * 73), 0 #net(torch.tensor(stateFeatures))
 
             p = utils.normalizeMPV(p, node.state)
 
             node.createChildren(p)
-            return -v
 
-        a = node.bestAction()
-        v = self.search(a)
-
-        # Backpropagation step
-        a.N += 1
-        a.W += v
-        a.Q = a.N / a.W
+        while stack:
+            v = -v
+            a = stack.pop()
+            a.N += 1
+            a.W += v
+            a.Q = 0 if a.W == 0 else a.N / a.W
 
         return -v
 
