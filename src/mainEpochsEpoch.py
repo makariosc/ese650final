@@ -7,6 +7,10 @@ if __name__ == "__main__":
     import copy
     from chessArena import ChessArena
 
+    import torch.multiprocessing as mp
+    torch.multiprocessing.set_sharing_strategy('file_system')
+    torch.multiprocessing.set_start_method("spawn")
+
     fromScratch = True # flag if running with no saved NN
 
     if fromScratch:

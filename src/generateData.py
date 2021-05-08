@@ -6,10 +6,18 @@ import chess
 import pickle
 from ChessGame import ChessGame
 
-import multiprocessing as mp
+import torch.multiprocessing as mp
+torch.multiprocessing.set_sharing_strategy('file_system')
+#torch.multiprocessing.set_start_method("spawn")
 
-def gameWorker(nn):
+def gameWorker(notUsed):
+
+    print("Staring gameWorker")
     ds = []
+
+    nn = ChessNet()
+    nn.load_state_dict(torch.load("./genDataModel.pt"))
+    print("Loaded nn")
 
     cg = ChessGame(nn, nn)
     examples = cg.gameLoop()
@@ -44,9 +52,22 @@ def genData(model, num_games = 1000, saveFile = True):
 
     pool = mp.Pool()
 
+
+    torch.save(model.state_dict(), "./genDataModel.pt")
+    loadedModel = ChessNet()
+    loadedModel.load_state_dict(torch.load("./genDataModel.pt"))
+
     # List of list of lists
     # [[[1,2,3],[1,2,3]], [[1,2,3],[1,2,3]]]
-    outData = pool.imap_unordered(gameWorker, [model] * num_games)
+    outData = pool.imap_unordered(gameWorker, [loadedModel] * num_games)
+#    p1s = []
+#    for i in range(6):
+#        p = mp.Process(target = gameWorker)
+#        p.start()
+#        p1s.append(p)
+#    for p in p1s:
+#        p.join()
+
 
     for d in outData:
         for example in d:
