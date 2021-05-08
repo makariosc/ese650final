@@ -26,9 +26,8 @@ class MCNode:
         pActIdxs = np.where(pActs)[0]
         for moveIndex in pActIdxs:
 
-            fromSquare = moveIndex // 73
-            if self.state.piece_at(fromSquare):
-                move = idxToMove(moveIndex, self.state)
+            move = idxToMove(moveIndex, self.state)
+            if move in self.state.legal_moves:
                 self.children[moveIndex] = Action(MCNode(deepcopy(self.state)), pActs[moveIndex])
                 self.children[moveIndex].nextState.state.push(move)
 

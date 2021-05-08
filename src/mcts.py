@@ -69,9 +69,10 @@ class MCTS:
         stateFeatures = utils.makeFeatures(node.state)
 
         p, v = net(torch.tensor(stateFeatures))
-        p = utils.normalizeMPV(p, node.state)
 
-        node.createChildren(p)
+        if node.state.outcome() is not None:
+            p = utils.normalizeMPV(p, node.state)
+            node.createChildren(p)
 
         while stack:
             v = -v
