@@ -42,22 +42,22 @@ def genData(model, num_games = 1000, saveFile = True):
     
     ds = []
 
-    pool = mp.Pool()
-
-    # List of list of lists
-    # [[[1,2,3],[1,2,3]], [[1,2,3],[1,2,3]]]
-    outData = pool.map(gameWorker, [model] * num_games, 25)
-
-    for d in outData:
-        for example in d:
-            ds.append(example)
-
-    # for i in range(num_games):
-    #     game = ChessGame(model, model) # start a new game with current model vs itself
-    #     data = game.gameLoop() # play the game
+    # pool = mp.Pool()
     #
-    #     dataset += data[0]
-    #     dataset += data[1]
+    # # List of list of lists
+    # # [[[1,2,3],[1,2,3]], [[1,2,3],[1,2,3]]]
+    # outData = pool.map(gameWorker, [model] * num_games, 25)
+    #
+    # for d in outData:
+    #     for example in d:
+    #         ds.append(example)
+
+    for i in range(num_games):
+        cg = ChessGame(model, model) # start a new game with current model vs itself
+        d = cg.gameLoop() # play the game
+
+        ds += d[0]
+        ds += d[1]
 
     # save dataset to a .txt fil
     if saveFile:
