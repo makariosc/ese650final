@@ -88,6 +88,11 @@ if __name__=="__main__":
         with open("test.txt","rb") as fp:
             dataset = pickle.load(fp)
     
+
+    #Convert model to cuda if the device is cuda.
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    model.to(device)
+
     train(model, dataset)
     
     # store data from each game state during the game to something (a list?)
