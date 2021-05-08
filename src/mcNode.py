@@ -25,9 +25,12 @@ class MCNode:
         self.pActs = pActs
         pActIdxs = np.where(pActs)[0]
         for moveIndex in pActIdxs:
-            move = idxToMove(moveIndex, self.state)
-            self.children[moveIndex] = Action(MCNode(deepcopy(self.state)), pActs[moveIndex])
-            self.children[moveIndex].nextState.state.push(move)
+
+            fromSquare = moveIndex // 73
+            if self.state.piece_at(fromSquare):
+                move = idxToMove(moveIndex, self.state)
+                self.children[moveIndex] = Action(MCNode(deepcopy(self.state)), pActs[moveIndex])
+                self.children[moveIndex].nextState.state.push(move)
 
 
     #Checks to see if the node is unexpanded (NOTE: Different from terminal nodes. No children in this case implies unexpanded children.)
