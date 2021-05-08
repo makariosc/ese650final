@@ -70,7 +70,7 @@ class MCTS:
 
         p, v = net(torch.tensor(stateFeatures))
 
-        if node.state.outcome() is not None:
+        if node.state.outcome() is None:
             p = utils.normalizeMPV(p, node.state)
             node.createChildren(p)
 
