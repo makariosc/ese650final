@@ -13,4 +13,4 @@ move = chess.Move.from_uci("b1a3")
 mi = utils.moveIdx(move)
 
 cg = ChessGame.ChessGame(None, None)
-cg.gameLoop()
+s = cg.gameLoop()
