@@ -239,6 +239,6 @@ def moveMask(board):
 # return the mpv with the legal move probabilities normalized
 def normalizeMPV(mv, board):
     mask = moveMask(board)
-    maskedMV = mask * mv
+    maskedMV = mask * mv.detach().numpy().squeeze()
 
     return maskedMV / np.linalg.norm(maskedMV)

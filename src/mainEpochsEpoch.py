@@ -24,11 +24,11 @@ numNewPlayers = 10 # end the updates after 10 new better versions have been rele
 iters = 0
 while iters < numNewPlayers:
     # generate data
-    genData(player1, player1)
+    genData(player1, num_games = 1000, saveFile = True)
     dataset = loadData()
     
     train(player1, player1)
-    replaced, winner,  = chessArena(player2, player1)
+    replaced, winner, games = chessArena(player2, player1)
     if replaced:
         player1 = copy.deepcopy(winner)
         player2 = copy.deepcopy(winner)
