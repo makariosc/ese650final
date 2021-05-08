@@ -58,6 +58,8 @@ if __name__=="__main__":
     game = ChessGame(model, model)
     data = game.gameLoop()
     
+    print('data collected')
+    
     dataset += data[0]
     dataset += data[1]
     
