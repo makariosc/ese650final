@@ -10,7 +10,7 @@ from ChessGame import ChessGame
 # uses MCTS to select a move
 # at each move, store: game state, search probs from MCTS, who won game (add after game ends)
 
-def selfPlay(model, num_games = 10000, saveFile = True):
+def genData(model, num_games = 1000, saveFile = True):
     """
     function runs best current player vs itself to generate dataset
 
@@ -38,11 +38,11 @@ def selfPlay(model, num_games = 10000, saveFile = True):
 
     # save dataset to a .txt fil
     if saveFile:
-        with open("selfPlay_dataset.txt","wb") as fp:
+        with open("current_dataset.txt","wb") as fp:
             pickle.dump(dataset,fp)
     
 def loadData():
-    with open("selfPlay_dataset.txt","rb") as fp:
+    with open("current_dataset.txt","rb") as fp:
         dataset = pickle.load(fp)
     return dataset
 
@@ -61,7 +61,8 @@ if __name__=="__main__":
     
     
     ## loading a previously saved model
-    # path = 'currentNN.pt'  # whatever the current best model is saved as
+    # path = 'currentNN.pth'  # whatever the current best model is saved as
+    # torch.save(model.state_dict(), path)
     
     # model = ChessNet()
     # model.load_state_dict(torch.load(path))

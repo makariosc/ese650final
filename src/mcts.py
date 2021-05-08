@@ -53,23 +53,25 @@ class MCTS:
 
         #Once we reach the leaf node, return the NN's assesment of the current state.
 
-        result = node.state.outcome()
-        if result is not None:
-            if result.winner is None:
-                p, v = np.ones(64 * 73), 0
-            elif result.winner == (not node.state.turn):
-                p, v = np.ones(64 * 73), -1
-            else:
-                p, v = np.ones(64 * 73), 1
+        # result = node.state.outcome()
+        # if result is not None:
+        #     if result.winner is None:
+        #         p, v = np.ones(64 * 73), 0
+        #     elif result.winner == (not node.state.turn):
+        #         p, v = np.ones(64 * 73), -1
+        #     else:
+        #         p, v = np.ones(64 * 73), 1
+        #
+        # else:
+        #     # Get the features and upload them to the nn
 
-        else:
-            # Get the features and upload them to the nn
-            stateFeatures = utils.makeFeatures(node.state)
-            p, v = np.ones(64 * 73), 0 #net(torch.tensor(stateFeatures))
+        # Get the features and upload them to the nn for state evaluation
+        stateFeatures = utils.makeFeatures(node.state)
 
-            p = utils.normalizeMPV(p, node.state)
+        p, v = net(torch.tensor(stateFeatures))
+        p = utils.normalizeMPV(p, node.state)
 
-            node.createChildren(p)
+        node.createChildren(p)
 
         while stack:
             v = -v
