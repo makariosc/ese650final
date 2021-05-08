@@ -52,7 +52,6 @@ class MCTS:
             a = node.bestAction()
             stack.append(a)
             node = a.nextState
-
         #Once we reach the leaf node, return the NN's assesment of the current state.
 
         # result = node.state.outcome()

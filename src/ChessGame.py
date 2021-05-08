@@ -25,7 +25,7 @@ class ChessGame(object):
     def legal(self):
         return list(self.board.legal_moves)
 
-    def selectMove(self, iterations = 10, depth_limit = 4):
+    def selectMove(self, iterations = 5, depth_limit = 4):
 
         if self.gameTree.root.state.turn == chess.WHITE:
             currNet = self.whiteNN
@@ -42,7 +42,7 @@ class ChessGame(object):
         self.move(theMove)
         
         
-        showBoard = True # quick flag for showing moves
+        showBoard = False # quick flag for showing moves
         
         if showBoard:
             print(theMove)
@@ -61,8 +61,11 @@ class ChessGame(object):
         return self.board
 
     def gameOver(self):
-        if self.board.is_stalemate() or self.board.can_claim_draw():
-            return True, 0
+        if self.board.is_stalemate():
+            return True, 0, False
+
+        if self.board.can_claim_draw():
+            return True, 0, True
 
         elif self.board.is_checkmate():
             # 1 if White, -1 if Black
@@ -71,20 +74,23 @@ class ChessGame(object):
             turnPlay = (self.currPlayer == chess.BLACK)
             return True, 2*turnPlay - 1
         elif self.board.outcome() is not None:
-            return True, 0
+            return True, 0, False
 
         else:
-            return False, 0
+            return False, 0, False
 
     def gameLoop(self):
 
         while True:
             self.selectMove()
 
-            done, v = self.gameOver()
+            done, v, claim = self.gameOver()
 
             if done:
-                print(f"TERMINATED: {self.board.outcome().termination}")
+                if (not claim):
+                    print(f"TERMINATED: {self.board.outcome().termination}")
+                else:
+                    print(f"TERMINATED: Claimed Draw")
 
                 if v == 0:
                     return self.moves
