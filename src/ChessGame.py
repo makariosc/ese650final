@@ -42,7 +42,7 @@ class ChessGame(object):
         self.move(theMove)
         
         
-        showBoard = False # quick flag for showing moves
+        showBoard = True # quick flag for showing moves
         
         if showBoard:
             print(theMove)

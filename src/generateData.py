@@ -3,20 +3,22 @@ import utils
 import mcts
 import torch
 import chess
+import pickle
 from ChessGame import ChessGame
 
 # best current player plays 25000 games against itself
 # uses MCTS to select a move
 # at each move, store: game state, search probs from MCTS, who won game (add after game ends)
 
-def selfPlay(num_games = 10000):
+def selfPlay(model, num_games = 10000, saveFile = True):
     """
-    function runs best current player to generate dataset
+    function runs best current player vs itself to generate dataset
 
     Parameters
     ----------
-    num_games : TYPE, optional
-        DESCRIPTION. The default is 10000.
+    model: current best NN model
+    num_games : number of games for NN to play itself. The default is 10000.
+    saveFile: flag to save the dataset generated
 
     Returns
     -------
@@ -25,8 +27,24 @@ def selfPlay(num_games = 10000):
     """
     num_games = num_games
     
-    pass
+    dataset = []
     
+    for i in range(num_games):
+        game = ChessGame(model, model) # start a new game with current model vs itself
+        data = game.gameLoop() # play the game
+        
+        dataset += data[0]
+        dataset += data[1]
+
+    # save dataset to a .txt fil
+    if saveFile:
+        with open("selfPlay_dataset.txt","wb") as fp:
+            pickle.dump(dataset,fp)
+    
+def loadData():
+    with open("selfPlay_dataset.txt","rb") as fp:
+        dataset = pickle.load(fp)
+    return dataset
 
 if __name__=="__main__":
     """
@@ -49,19 +67,26 @@ if __name__=="__main__":
     # model.load_state_dict(torch.load(path))
     # model.eval() # make sure model doesn't change
     
-    dataset = []
-    
-    num_games = 25000 # used later
-    
     model = ChessNet()
     
     game = ChessGame(model, model)
-    data = game.gameLoop()
     
-    print('data collected')
+    playGame = False
     
-    dataset += data[0]
-    dataset += data[1]
+    if playGame:
+        data = game.gameLoop()
+        
+        print('data collected')
+        
+        dataset = []
+        dataset += data[0]
+        dataset += data[1]
+        
+        with open("test.txt","wb") as fp:
+            pickle.dump(dataset,fp)
+    else:
+        with open("test.txt","rb") as fp:
+            dataset = pickle.load(fp)
     
     train(model, dataset)
     
