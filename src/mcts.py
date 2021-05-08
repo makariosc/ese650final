@@ -42,7 +42,6 @@ class MCTS:
     # Expand down into the tree recursively and find a leaf node.
     # When we find the leaf node, query the NN to initialize its children.
     def search(self, node, net):
-        # TODO: HOOK THIS UP TO THE NN FOR P AND V VALUES
 
         stack = deque()
 

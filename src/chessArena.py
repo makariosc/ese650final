@@ -43,7 +43,7 @@ def ChessArena(oldNN, newNN, numGames = 50):
     tSet = []
 
     pool = mp.Pool()
-    outcomes = pool.imap(arenaWorker, [(oldNN, newNN)] * numGames, 4)
+    outcomes = pool.imap_unordered(arenaWorker, [(oldNN, newNN)] * numGames)
 
     for o in outcomes:
         numOldWins += o[0][0]
