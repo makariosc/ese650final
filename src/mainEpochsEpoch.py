@@ -1,12 +1,11 @@
-from generateData import genData, loadData
-from alphaZeroNet import ChessNet, train
-import chessArena
-import torch
-import copy
-from chessArena import ChessArena
-
-
 if __name__ == "__main__":
+
+    from generateData import genData, loadData
+    from alphaZeroNet import ChessNet, train
+    import chessArena
+    import torch
+    import copy
+    from chessArena import ChessArena
 
     fromScratch = True # flag if running with no saved NN
 
