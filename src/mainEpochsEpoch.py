@@ -28,7 +28,7 @@ while iters < numNewPlayers:
     dataset = loadData()
     
     train(player1, player1)
-    winner, replaced = chessArena(player2, player1)
+    replaced, winner,  = chessArena(player2, player1)
     if replaced:
         player1 = copy.deepcopy(winner)
         player2 = copy.deepcopy(winner)
