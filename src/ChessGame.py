@@ -27,7 +27,7 @@ class ChessGame(object):
 
     def selectMove(self, iterations = 10):
 
-        if self.currPlayer == chess.WHITE:
+        if self.gameTree.root.state.turn == chess.WHITE:
             currNet = self.whiteNN
         else:
             currNet = self.blackNN
