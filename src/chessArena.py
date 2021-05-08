@@ -5,6 +5,8 @@ import chess
 import threading
 from datetime import datetime
 
+c = threading.con
+
 def ChessArena(oldNN, newNN, numGames = 50):
 
     numOldWins = 0

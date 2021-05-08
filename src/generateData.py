@@ -6,6 +6,19 @@ import chess
 import pickle
 from ChessGame import ChessGame
 
+import multiprocessing as mp
+
+def gameWorker(nn):
+    ds = []
+
+    cg = ChessGame(nn, nn)
+    examples = cg.gameLoop()
+
+    ds += examples[0]
+    ds += examples[1]
+
+    return ds
+
 # best current player plays 25000 games against itself
 # uses MCTS to select a move
 # at each move, store: game state, search probs from MCTS, who won game (add after game ends)
@@ -27,24 +40,34 @@ def genData(model, num_games = 1000, saveFile = True):
     """
     num_games = num_games
     
-    dataset = []
-    
-    for i in range(num_games):
-        game = ChessGame(model, model) # start a new game with current model vs itself
-        data = game.gameLoop() # play the game
-        
-        dataset += data[0]
-        dataset += data[1]
+    ds = []
+
+    pool = mp.Pool()
+
+    # List of list of lists
+    # [[[1,2,3],[1,2,3]], [[1,2,3],[1,2,3]]]
+    outData = pool.map(gameWorker, [model] * num_games, 25)
+
+    for d in outData:
+        for example in d:
+            ds.append(example)
+
+    # for i in range(num_games):
+    #     game = ChessGame(model, model) # start a new game with current model vs itself
+    #     data = game.gameLoop() # play the game
+    #
+    #     dataset += data[0]
+    #     dataset += data[1]
 
     # save dataset to a .txt fil
     if saveFile:
         with open("current_dataset.txt","wb") as fp:
-            pickle.dump(dataset,fp)
+            pickle.dump(ds,fp)
     
 def loadData():
     with open("current_dataset.txt","rb") as fp:
-        dataset = pickle.load(fp)
-    return dataset
+        ds = pickle.load(fp)
+    return ds
 
 if __name__=="__main__":
     """
