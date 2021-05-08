@@ -12,9 +12,9 @@ def ChessArena(oldNN, newNN, numGames = 50):
 
     tSet = []
 
-    for i in numGames:
+    for i in range(numGames):
         if i % 2 == 0:
-            cg = ChessGame(oldNN, newNN)
+            cg = ChessGame.ChessGame(oldNN, newNN)
             moves = cg.gameLoop()
             tSet.append(moves)
 
@@ -23,7 +23,7 @@ def ChessArena(oldNN, newNN, numGames = 50):
             elif moves[chess.WHITE][0][2] == -1:
                 numNewWins += 1
         else:
-            cg = ChessGame(newNN, oldNN)
+            cg = ChessGame.ChessGame(newNN, oldNN)
             moves = cg.gameLoop()
             tSet.append(moves)
 
