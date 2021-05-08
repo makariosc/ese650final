@@ -40,10 +40,15 @@ class ChessGame(object):
         self.gameTree.root = self.gameTree.root.children[mIdx].nextState
 
         self.move(theMove)
-        print(theMove)
-
-        print("=====")
-        print(self.gameTree.root.state)
+        
+        
+        showBoard = True # quick flag for showing moves
+        
+        if showBoard:
+            print(theMove)
+    
+            print("=====")
+            print(self.gameTree.root.state)
 
         # Add the move to our training examples
         self.moves[self.currPlayer].append([utils.makeFeatures(self.board), pi, 0])

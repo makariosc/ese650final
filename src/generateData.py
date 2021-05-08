@@ -3,13 +3,54 @@ import utils
 import mcts
 import torch
 import chess
+import pickle
 from ChessGame import ChessGame
 
 # best current player plays 25000 games against itself
 # uses MCTS to select a move
 # at each move, store: game state, search probs from MCTS, who won game (add after game ends)
 
+def selfPlay(model, num_games = 10000, saveFile = True):
+    """
+    function runs best current player vs itself to generate dataset
+
+    Parameters
+    ----------
+    model: current best NN model
+    num_games : number of games for NN to play itself. The default is 10000.
+    saveFile: flag to save the dataset generated
+
+    Returns
+    -------
+    None.
+
+    """
+    num_games = num_games
+    
+    dataset = []
+    
+    for i in range(num_games):
+        game = ChessGame(model, model) # start a new game with current model vs itself
+        data = game.gameLoop() # play the game
+        
+        dataset += data[0]
+        dataset += data[1]
+
+    # save dataset to a .txt fil
+    if saveFile:
+        with open("selfPlay_dataset.txt","wb") as fp:
+            pickle.dump(dataset,fp)
+    
+def loadData():
+    with open("selfPlay_dataset.txt","rb") as fp:
+        dataset = pickle.load(fp)
+    return dataset
+
 if __name__=="__main__":
+    """
+    debugging purposes
+    """
+    
     print('poop')
     # need to load best current model
     # should be saved from torch.save(model.state_dict(), PATH)
@@ -26,13 +67,28 @@ if __name__=="__main__":
     # model.load_state_dict(torch.load(path))
     # model.eval() # make sure model doesn't change
     
-    num_games = 25000 # used later
-    
     model = ChessNet()
     
     game = ChessGame(model, model)
-    data = game.gameLoop()
     
+    playGame = False
+    
+    if playGame:
+        data = game.gameLoop()
+        
+        print('data collected')
+        
+        dataset = []
+        dataset += data[0]
+        dataset += data[1]
+        
+        with open("test.txt","wb") as fp:
+            pickle.dump(dataset,fp)
+    else:
+        with open("test.txt","rb") as fp:
+            dataset = pickle.load(fp)
+    
+    train(model, dataset)
     
     # store data from each game state during the game to something (a list?)
     # save this to some file
