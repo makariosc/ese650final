@@ -47,8 +47,8 @@ class ChessGame(object):
         if showBoard:
             print(theMove)
     
-            #print("=====")
-            #print(self.gameTree.root.state)
+            print("=====")
+            print(self.gameTree.root.state)
 
         # Add the move to our training examples
         self.moves[self.currPlayer].append([utils.makeFeatures(self.board), pi, 0])
