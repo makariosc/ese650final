@@ -2,10 +2,7 @@ import numpy as np
 import ChessGame
 import torch
 import chess
-import threading
 from datetime import datetime
-
-c = threading.con
 
 def ChessArena(oldNN, newNN, numGames = 50):
 
