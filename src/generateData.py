@@ -46,7 +46,7 @@ def genData(model, num_games = 1000, saveFile = True):
 
     # List of list of lists
     # [[[1,2,3],[1,2,3]], [[1,2,3],[1,2,3]]]
-    outData = pool.map(gameWorker, [model] * num_games, 25)
+    outData = pool.imap(gameWorker, [model] * num_games, 4)
 
     for d in outData:
         for example in d:
