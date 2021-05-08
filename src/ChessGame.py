@@ -25,7 +25,7 @@ class ChessGame(object):
     def legal(self):
         return list(self.board.legal_moves)
 
-    def selectMove(self, iterations = 10):
+    def selectMove(self, iterations = 10, depth_limit = 4):
 
         if self.gameTree.root.state.turn == chess.WHITE:
             currNet = self.whiteNN
@@ -33,7 +33,7 @@ class ChessGame(object):
             currNet = self.blackNN
 
         for _ in range(iterations):
-            self.gameTree.search(self.gameTree.root, currNet)
+            self.gameTree.search(self.gameTree.root, currNet, depth_limit)
 
         mIdx, pi = self.gameTree.select(1, True)
         theMove = utils.idxToMove(mIdx, self.gameTree.root.state)
@@ -61,7 +61,7 @@ class ChessGame(object):
         return self.board
 
     def gameOver(self):
-        if self.board.is_stalemate():
+        if self.board.is_stalemate() or self.board.can_claim_draw():
             return True, 0
 
         elif self.board.is_checkmate():
