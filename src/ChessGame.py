@@ -1,12 +1,16 @@
 import chess
+import chess.pgn
 import mcts
 import utils
+from datetime import datetime
 
 #Chess Game class for general use. Needs some work.
 
 class ChessGame(object):
 
     def __init__(self, whiteNN, blackNN):
+        self.pgn = chess.pgn.Game()
+
         self.board = chess.Board()
         self.currPlayer = chess.WHITE
 
@@ -25,7 +29,7 @@ class ChessGame(object):
     def legal(self):
         return list(self.board.legal_moves)
 
-    def selectMove(self, iterations = 5, depth_limit = 4):
+    def selectMove(self, iterations = 15, depth_limit = 4):
 
         if self.gameTree.root.state.turn == chess.WHITE:
             currNet = self.whiteNN
@@ -40,9 +44,10 @@ class ChessGame(object):
         self.gameTree.root = self.gameTree.root.children[mIdx].nextState
 
         self.move(theMove)
+        self.pgn.end().add_main_variation(theMove)
         
         
-        showBoard = False # quick flag for showing moves
+        showBoard = True # quick flag for showing moves
         
         if showBoard:
             print(theMove)
@@ -72,7 +77,7 @@ class ChessGame(object):
 
             #If I understand this correctly, the "turn player" on a checkmate state is the loser. If it's black's turn and checkmate then white wins.
             turnPlay = (self.currPlayer == chess.BLACK)
-            return True, 2*turnPlay - 1
+            return True, 2*turnPlay - 1, False
         elif self.board.outcome() is not None:
             return True, 0, False
 
@@ -105,6 +110,9 @@ class ChessGame(object):
                     sample[2] = wVal
                 for sample in self.moves[chess.BLACK]:
                     sample[2] = bVal
+
+                nowstr = datetime.now().strftime("%d%m%Y%H%M%S")
+                print(self.pgn, file=open(f"./pgn/{nowstr}.pgn", "w+"), end="\n\n") 
 
                 return self.moves
 

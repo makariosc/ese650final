@@ -50,7 +50,7 @@ def genData(model, num_games = 1000, saveFile = True):
     
     ds = []
 
-    pool = mp.Pool()
+    pool = mp.Pool(processes=3)
 
 
     torch.save(model.state_dict(), "./genDataModel.pt")
