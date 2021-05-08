@@ -32,9 +32,9 @@ if __name__ == "__main__":
         dataset = loadData()
 
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-        model.to(device)
+        player1.to(device)
 
-        train(player1, player1)
+        train(player1, dataset)
         replaced, winner, games = ChessArena(player2, player1)
         if replaced:
             player1 = copy.deepcopy(winner)
