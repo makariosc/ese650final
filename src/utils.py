@@ -231,8 +231,8 @@ def moveIdx(m):
 # Given a board, return a mask that zeros out all illegal moves.
 def moveMask(board):
     mv = np.zeros(64 * 73)
-    for m in board.legal_moves:
-        mv[moveIdx(m)] = 1
+    idxs = list(map(moveIdx, board.legal_moves))
+    mv[idxs] = 1
     return mv
 
 # Given a 64 x 73 movement probability vector and the board it came from,

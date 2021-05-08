@@ -12,11 +12,7 @@ class MCNode:
 
         #Saves the board state.
         self.state = state
-
         self.pActs = np.array([])
-
-        #Initializes a default dictionary to save the values of "edges" (i.e. state/action pairs) important to this node.
-        self.actionDict = collections.Counter()
 
         # Dictionary mapping move indices (see utils moveToIdx) to Children nodes and action probabilities.
         self.children = {}
@@ -25,7 +21,6 @@ class MCNode:
         self.pActs = pActs
         pActIdxs = np.where(pActs)[0]
         for moveIndex in pActIdxs:
-
             move = idxToMove(moveIndex, self.state)
             if move in self.state.legal_moves:
                 self.children[moveIndex] = Action(MCNode(deepcopy(self.state)), pActs[moveIndex])
@@ -49,13 +44,23 @@ class MCNode:
         NSum = sum(NList)
         NSum  = np.sqrt(NSum)
 
-        for acts in self.children.keys():
-            edge = self.children[acts]
+        def calcPuct(act):
+            edge = self.children[act]
 
             U = c * edge.P * NSum / (1+edge.N)
             Q = edge.Q
 
-            puctList[acts] = Q+U
+            puctList[act] = Q+U
+
+        list(map(calcPuct, self.children.keys()))
+
+        # for acts in self.children.keys():
+        #     edge = self.children[acts]
+        #
+        #     U = c * edge.P * NSum / (1+edge.N)
+        #     Q = edge.Q
+        #
+        #     puctList[acts] = Q+U
 
         bestAct = max(puctList, key = puctList.get)
 
