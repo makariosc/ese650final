@@ -90,6 +90,9 @@ def ChessArena(oldNN, newNN, numGames = 50):
 
             return True, newNN, [1,2,3]
 
+        else:
+            return False, oldNN, [1,2,3]
+
     else:
         return False, oldNN, [1,2,3]
 

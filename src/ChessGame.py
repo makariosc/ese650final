@@ -29,7 +29,7 @@ class ChessGame(object):
     def legal(self):
         return list(self.board.legal_moves)
 
-    def selectMove(self, iterations = 15, depth_limit = 4):
+    def selectMove(self, iterations = 20, depth_limit = 4):
 
         if self.gameTree.root.state.turn == chess.WHITE:
             currNet = self.whiteNN
