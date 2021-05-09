@@ -75,9 +75,15 @@ class ChessGame(object):
         elif self.board.is_checkmate():
             # 1 if White, -1 if Black
 
-            #If I understand this correctly, the "turn player" on a checkmate state is the loser. If it's black's turn and checkmate then white wins.
-            turnPlay = (self.currPlayer == chess.BLACK)
-            return True, 2*turnPlay - 1, False
+            #If I understand this correctly, the "turn player" on a checkmate state is the loser.
+            # If it's black's turn and checkmate then white wins.
+
+            result = self.board.outcome()
+            if result.winner == chess.BLACK:
+                return True, -1, False
+            else:
+                return True, 1, False
+            
         elif self.board.outcome() is not None:
             return True, 0, False
 
