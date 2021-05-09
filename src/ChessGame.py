@@ -88,12 +88,9 @@ class ChessGame(object):
 
                 if v == 0:
                     return self.moves
-                elif v == 1:
+                else:
                     wVal = v
                     bVal = -v
-                else:
-                    wVal = -v
-                    bVal = v
 
                 for sample in self.moves[chess.WHITE]:
                     sample[2] = wVal
