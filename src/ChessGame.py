@@ -47,7 +47,7 @@ class ChessGame(object):
         self.pgn.end().add_main_variation(theMove)
         
         
-        showBoard = True # quick flag for showing moves
+        showBoard = False # quick flag for showing moves
         
         if showBoard:
             print(theMove)

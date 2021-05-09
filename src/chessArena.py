@@ -88,10 +88,10 @@ def ChessArena(oldNN, newNN, numGames = 50):
             path = f"./{datetime.today().strftime('%Y-%m-%d-%H-%M-%S')}"
             torch.save(newNN.state_dict(), path)
 
-            return True, newNN, tSet
+            return True, newNN, [1,2,3]
 
     else:
-        return False, oldNN, tSet
+        return False, oldNN, [1,2,3]
 
 
 

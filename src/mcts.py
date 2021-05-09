@@ -43,7 +43,7 @@ class MCTS:
     # When we find the leaf node, query the NN to initialize its children.
     def search(self, node, net, depth_limit):
 
-        print("SEARCH")
+        #print("SEARCH")
         counter = 0
 
         stack = deque()
