@@ -83,7 +83,7 @@ class ChessGame(object):
                 return True, -1, False
             else:
                 return True, 1, False
-            
+
         elif self.board.outcome() is not None:
             return True, 0, False
 
