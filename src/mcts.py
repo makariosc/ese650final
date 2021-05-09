@@ -41,17 +41,17 @@ class MCTS:
 
     # Expand down into the tree recursively and find a leaf node.
     # When we find the leaf node, query the NN to initialize its children.
-    def search(self, node, net):
+    def search(self, node, net, depth_limit):
 
-        print("SEARCH")
+        #print("SEARCH")
+        counter = 0
 
         stack = deque()
 
-        while node.has_children():
+        while node.has_children() and counter < depth_limit:
             a = node.bestAction()
             stack.append(a)
             node = a.nextState
-
         #Once we reach the leaf node, return the NN's assesment of the current state.
 
         # result = node.state.outcome()

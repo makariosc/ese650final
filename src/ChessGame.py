@@ -1,12 +1,16 @@
 import chess
+import chess.pgn
 import mcts
 import utils
+from datetime import datetime
 
 #Chess Game class for general use. Needs some work.
 
 class ChessGame(object):
 
     def __init__(self, whiteNN, blackNN):
+        self.pgn = chess.pgn.Game()
+
         self.board = chess.Board()
         self.currPlayer = chess.WHITE
 
@@ -25,7 +29,7 @@ class ChessGame(object):
     def legal(self):
         return list(self.board.legal_moves)
 
-    def selectMove(self, iterations = 10):
+    def selectMove(self, iterations = 20, depth_limit = 4):
 
         if self.gameTree.root.state.turn == chess.WHITE:
             currNet = self.whiteNN
@@ -33,16 +37,17 @@ class ChessGame(object):
             currNet = self.blackNN
 
         for _ in range(iterations):
-            self.gameTree.search(self.gameTree.root, currNet)
+            self.gameTree.search(self.gameTree.root, currNet, depth_limit)
 
         mIdx, pi = self.gameTree.select(1, True)
         theMove = utils.idxToMove(mIdx, self.gameTree.root.state)
         self.gameTree.root = self.gameTree.root.children[mIdx].nextState
 
         self.move(theMove)
+        self.pgn.end().add_main_variation(theMove)
         
         
-        showBoard = True # quick flag for showing moves
+        showBoard = False # quick flag for showing moves
         
         if showBoard:
             print(theMove)
@@ -62,29 +67,35 @@ class ChessGame(object):
 
     def gameOver(self):
         if self.board.is_stalemate():
-            return True, 0
+            return True, 0, False
+
+        if self.board.can_claim_draw():
+            return True, 0, True
 
         elif self.board.is_checkmate():
             # 1 if White, -1 if Black
 
             #If I understand this correctly, the "turn player" on a checkmate state is the loser. If it's black's turn and checkmate then white wins.
             turnPlay = (self.currPlayer == chess.BLACK)
-            return True, 2*turnPlay - 1
+            return True, 2*turnPlay - 1, False
         elif self.board.outcome() is not None:
-            return True, 0
+            return True, 0, False
 
         else:
-            return False, 0
+            return False, 0, False
 
     def gameLoop(self):
 
         while True:
             self.selectMove()
 
-            done, v = self.gameOver()
+            done, v, claim = self.gameOver()
 
             if done:
-                print(f"TERMINATED: {self.board.outcome().termination}")
+                if (not claim):
+                    print(f"TERMINATED: {self.board.outcome().termination}")
+                else:
+                    print(f"TERMINATED: Claimed Draw")
 
                 if v == 0:
                     return self.moves
@@ -96,6 +107,9 @@ class ChessGame(object):
                     sample[2] = wVal
                 for sample in self.moves[chess.BLACK]:
                     sample[2] = bVal
+
+                nowstr = datetime.now().strftime("%d%m%Y%H%M%S")
+                print(self.pgn, file=open(f"./pgn/{nowstr}.pgn", "w+"), end="\n\n") 
 
                 return self.moves
 

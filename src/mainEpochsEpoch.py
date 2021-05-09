@@ -32,14 +32,18 @@ if __name__ == "__main__":
     iters = 0
     while iters < numNewPlayers:
         # generate data
-        genData(player1, num_games = 50, saveFile = True)
+
+        genData(player1, num_games = 8, saveFile = True)
         dataset = loadData()
 
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         player1.to(device)
 
         train(player1, dataset)
-        replaced, winner, games = ChessArena(player2, player1)
+
+        player1.to('cpu')
+
+        replaced, winner, games = ChessArena(player2, player1, 8)
         if replaced:
             player1 = copy.deepcopy(winner)
             player2 = copy.deepcopy(winner)
