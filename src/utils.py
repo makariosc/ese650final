@@ -1,4 +1,5 @@
 import chess
+import chess.pgn
 from chess import SquareSet
 
 import numpy as np
@@ -242,3 +243,47 @@ def normalizeMPV(mv, board):
     maskedMV = mask * mv.detach().numpy().squeeze()
 
     return maskedMV / np.linalg.norm(maskedMV)
+
+def pgnData(fileName):
+    data = []
+    games = []
+
+    pgn = open(fileName)
+
+    while True:
+        game = chess.pgn.read_game(pgn)
+        if game is not None:
+            print(game.headers["Event"])
+            games.append(game)
+        else:
+            break
+
+    for game in games:
+        print(game.headers["Event"])
+        board = game.board()
+
+        for move in game.mainline_moves():
+            boardFeatures = makeFeatures(board)
+
+            pi = np.zeros(64*73)
+            midx = moveIdx(move)
+            pi[midx] = 1
+
+            result = 0
+            if game.headers["Result"] == "1-0" and board.turn == chess.WHITE:
+                result = 1
+            elif game.headers["Result"] == "1-0" and board.turn == chess.BLACK:
+                result = -1
+            elif game.headers["Result"] == "0-1" and board.turn == chess.BLACK:
+                result = 1
+            elif game.headers["Result"] == "0-1" and board.turn == chess.WHITE:
+                result = -1
+
+            data.append((boardFeatures, pi, result))
+
+            board.push(move)
+
+
+    print("done")
+
+    return data

@@ -1,3 +1,4 @@
+from alphaZeroNet import ChessNet
 import utils
 import chess
 import mcNode
@@ -14,5 +15,8 @@ n.createChildren(pi)
 move = chess.Move.from_uci("b1a3")
 mi = utils.moveIdx(move)
 
-cg = ChessGame.ChessGame(None, None)
+nn = ChessNet()
+nn.load_state_dict(torch.load("./genDataModel.pt"))
+
+cg = ChessGame.ChessGame(nn, nn)
 s = cg.gameLoop()
