@@ -287,3 +287,5 @@ def pgnData(fileName):
     print("done")
 
     return data
+
+
