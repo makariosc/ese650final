@@ -1,6 +1,7 @@
 import chess
 import chess.pgn
 from chess import SquareSet
+import os
 
 import numpy as np
 
@@ -287,5 +288,14 @@ def pgnData(fileName):
     print("done")
 
     return data
+
+def loadTrainingFromPgns():
+    trainingData = []
+
+    pgns = os.listdir("./training_pgns/")
+    for pgn in pgns:
+        trainingData += pgnData(f"./training_pgns/{pgn}")
+
+    return trainingData
 
 
