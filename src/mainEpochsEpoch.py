@@ -11,14 +11,14 @@ if __name__ == "__main__":
     torch.multiprocessing.set_sharing_strategy('file_system')
     torch.multiprocessing.set_start_method("spawn")
 
-    fromScratch = True # flag if running with no saved NN
+    fromScratch = False # flag if running with no saved NN
 
     if fromScratch:
         # initialize some new network
         player1 = ChessNet()
     else:
         player1 = ChessNet()
-        player1.load_state_dict(torch.load("bestplayer.pth"))
+        player1.load_state_dict(torch.load("2021-05-09-04-42-48.pt"))
 
 
 
@@ -33,7 +33,7 @@ if __name__ == "__main__":
     while iters < numNewPlayers:
         # generate data
 
-        genData(player1, num_games = 8, saveFile = True)
+        genData(player1, num_games = 32, saveFile = True)
         dataset = loadData()
 
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -43,7 +43,7 @@ if __name__ == "__main__":
 
         player1.to('cpu')
 
-        replaced, winner, games = ChessArena(player2, player1, 8)
+        replaced, winner, games = ChessArena(player2, player1, 16)
         if replaced:
             player1 = copy.deepcopy(winner)
             player2 = copy.deepcopy(winner)
