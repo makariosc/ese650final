@@ -6,6 +6,7 @@ if __name__ == "__main__":
     import torch
     import copy
     from chessArena import ChessArena
+    import utils
 
     import torch.multiprocessing as mp
     torch.multiprocessing.set_sharing_strategy('file_system')
@@ -28,13 +29,11 @@ if __name__ == "__main__":
 
     numNewPlayers = 10 # end the updates after 10 new better versions have been released
 
+    dataset = utils.loadTrainingFromPgns()
+
     # player1 will be the best current player that we try to train
     iters = 0
     while iters < numNewPlayers:
-        # generate data
-        genData(player1, num_games = 50, saveFile = True)
-        dataset = loadData()
-
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         player1.to(device)
 

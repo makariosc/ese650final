@@ -156,7 +156,7 @@ def train(net, dataset, epoch_start=0, epoch_stop=20, cpu=0):
     
     # train_set = board_data(dataset)
     # train_loader = DataLoader(train_set, batch_size=30, shuffle=True, num_workers=0, pin_memory=False)
-    train_loader = DataLoader(dataset, batch_size=30, shuffle=True, num_workers=0, pin_memory=False)
+    train_loader = DataLoader(dataset, batch_size=256, shuffle=True, num_workers=0, pin_memory=False)
     losses_per_epoch = []
     for epoch in range(epoch_start, epoch_stop):
         scheduler.step()
