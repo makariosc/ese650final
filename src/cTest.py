@@ -1,22 +1,28 @@
 from Connect4 import Connect4
 from Connect4Game import Connect4Game
 import OthelloNet
+import Arena
 
 import multiprocessing as mp
 
 
-def gameWrapper(net):
-    game = Connect4Game(net, net)
-    return game.runGame()
+# def gameWrapper(net):
+#     game = Connect4Game(net, net)
+#     return game.runGame()
 
 if __name__ == "__main__":
 
     nn = OthelloNet.OthelloNNet()
     nn.eval()
 
-    p = mp.Pool(3)
+    outcome = Arena.Arena(nn, nn)
+    print(outcome)
 
-    out = p.map(gameWrapper, [nn] * 6)
+
+    #
+    # p = mp.Pool(3)
+    #
+    # out = p.map(gameWrapper, [nn] * 6)
 
     # set = game.runGame()
 
