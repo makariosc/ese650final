@@ -1,6 +1,6 @@
 from Connect4 import Connect4
 from Connect4Game import Connect4Game
-import OthelloNet
+from alphaZeroNet import ChessNet
 import Arena
 import torch
 
@@ -13,8 +13,7 @@ import multiprocessing as mp
 
 if __name__ == "__main__":
 
-    nn = OthelloNet.OthelloNNet()
-    nn.load_state_dict(torch.load("2021-05-10-21-44-54.pt"))
+    nn = ChessNet()
     nn.eval()
 
     game = Connect4Game(nn, nn)
