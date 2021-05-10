@@ -72,6 +72,8 @@ class AlphaLoss(torch.nn.Module):
         policy_error = torch.sum((policy* 
                                 (1e-8 + y_policy.float()).float()), 1)
 
+        print(value)
+
         total_error = (value_error.view(-1).float() - policy_error).mean()
         return total_error
 

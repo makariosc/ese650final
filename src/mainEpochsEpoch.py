@@ -1,4 +1,4 @@
-from OthelloNet import OthelloNNet, train
+from alphaZeroNet import ChessNet, train
 import torch
 import copy
 import Arena
@@ -14,9 +14,9 @@ if __name__ == "__main__":
 
     if fromScratch:
         # initialize some new network
-        player1 = OthelloNNet()
+        player1 = ChessNet()
     else:
-        player1 = OthelloNNet()
+        player1 = ChessNet()
         player1.load_state_dict(torch.load("bestplayer.pt"))
 
     player2 = type(player1)()
