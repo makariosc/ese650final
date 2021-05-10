@@ -1,6 +1,7 @@
 # Taken from https://github.com/suragnair/alpha-zero-general/blob/master/othello/pytorch/OthelloNNet.py
 
 import sys
+import os
 sys.path.append('..')
 from utils import *
 
@@ -11,6 +12,8 @@ import torch.nn.functional as F
 import torch.optim as optim
 from torch.utils.data import Dataset, DataLoader
 import matplotlib.pyplot as plt
+
+import datetime
 
 class OthelloNNet(nn.Module):
     def __init__(self):

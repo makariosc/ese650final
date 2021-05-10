@@ -4,7 +4,7 @@ import random
 import torch
 from datetime import datetime
 
-import multiprocessing as mp
+import torch.multiprocessing as mp
 
 def arenaWorker(nns):
     old, new = nns

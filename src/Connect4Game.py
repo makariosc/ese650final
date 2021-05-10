@@ -1,4 +1,5 @@
 from Connect4 import Connect4
+import torch
 import Connect4
 import mcts
 
@@ -30,7 +31,7 @@ class Connect4Game:
 
         self.game.go(move)
         self.moves[not self.game.turn].append(
-            [self.game.features(), pi, 0]
+            [torch.tensor(self.game.features()), torch.tensor(pi), 0]
         )
 
         if not self.game.finished:
@@ -38,11 +39,9 @@ class Connect4Game:
 
 
     def runGame(self):
+        print("Starting game.")
         while not self.game.finished:
             self.selectMove()
-
-            print("========")
-            self.game.show()
 
         if self.game.winner is None:
             print(f"Terminated by draw.")
