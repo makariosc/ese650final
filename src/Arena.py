@@ -51,7 +51,7 @@ def Arena(oldNN, newNN, numGames = 50, tournament = False):
 
     if numOldWins + numNewWins > 0:
         if numNewWins / (numOldWins + numNewWins) >= 0.55:
-            print("replacing nn")
+            print("saving nn")
             # Save the nn to a file
             if not tournament:
                 path = f"./{datetime.today().strftime('%Y-%m-%d-%H-%M-%S')}.pt"
