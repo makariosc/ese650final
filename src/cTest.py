@@ -14,7 +14,7 @@ import multiprocessing as mp
 if __name__ == "__main__":
 
     nn = OthelloNet.OthelloNNet()
-    nn.load_state_dict(torch.load("2021-05-10-08-49-50.pt"))
+    nn.load_state_dict(torch.load("2021-05-10-21-44-54.pt"))
     nn.eval()
 
     game = Connect4Game(nn, nn)

@@ -41,7 +41,6 @@ def Arena(oldNN, newNN, numGames = 50):
 
     ds = []
     for o in outcomes:
-        print(o)
         numOldWins += o[0]
         numNewWins += o[1]
         for example in o[2]:

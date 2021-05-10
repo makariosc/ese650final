@@ -19,6 +19,9 @@ class Connect4Game:
 
     def selectMove(self, iterations = 25):
 
+        print("======")
+        self.game.show()
+
         if self.game.turn == Connect4.RED:
             currNN = self.nn1
         else:
@@ -41,12 +44,14 @@ class Connect4Game:
     def runGame(self):
 #        print("Starting game.")
         while not self.game.finished:
-#            self.game.show()
             self.selectMove()
+
+        print("======")
+        self.game.show()
 
         if self.game.winner is None:
 #            print(f"Terminated by draw.")
-             pass
+             return self.moves
         else:
 #            print(f"Terminated by win.")
 

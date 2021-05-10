@@ -66,7 +66,7 @@ class MCTS:
         stateFeatures = node.state.features()
         p, v = net(torch.tensor(stateFeatures).float())
 
-        if node.state.winner is None:
+        if not node.state.finished:
             p = p.detach().numpy().squeeze() * node.state.validActionsMask()
             p = p / np.linalg.norm(p)
             node.createChildren(p)

@@ -30,9 +30,9 @@ if __name__ == "__main__":
     # player1 will be the best current player that we try to train
     iters = 0
     dataset = []
-    while iters < numNewPlayers:
+    while True:
         # generate data
-        _, ds = Arena.Arena(player1, player1, 25)
+        _, ds = Arena.Arena(player1, player1, 150)
         dataset += ds
 
         print("Done generating dataset.")
@@ -45,8 +45,9 @@ if __name__ == "__main__":
         player1.to('cpu')
         player1.eval()
 
-        replaced, dataset = Arena.Arena(player2, player1, 21)
-        if replaced:
-            player2.load_state_dict(player1.state_dict())
-            player2.eval()
-            iters += 1
+        if iters % 5 == 0:
+            replaced, dataset = Arena.Arena(player2, player1, 100)
+            if replaced:
+                player2.load_state_dict(player1.state_dict())
+                player2.eval()
+        iters += 1
