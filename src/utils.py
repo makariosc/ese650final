@@ -156,7 +156,6 @@ def idxToMove(i, board):
             dR, dF = -1, 1
         promotion = toSquareIdx % 70 + 2
     else:
-        print("CRASHING")
         return 0
 
     toSquare = chess.square(fromFile + dF, fromRank + dR)

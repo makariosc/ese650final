@@ -98,7 +98,7 @@ class ChessGame(object):
             done, v, claim = self.gameOver()
 
             if done:
-                if (not claim):
+                if not claim:
                     print(f"TERMINATED: {self.board.outcome().termination}")
                 else:
                     print(f"TERMINATED: Claimed Draw")

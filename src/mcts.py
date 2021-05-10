@@ -24,13 +24,12 @@ class MCTS:
 
     # Picks a move from the current tree
     def select(self, tau = 1, explore = True):
-        idxs = list(self.root.children.keys())
-        ns = np.array([self.root.children[i].N for i in idxs])
+        ns = np.array([action.N if action is not None else 0 for action in self.root.children])
         ns = ns / np.sum(ns)
 
         if explore:
             ns = ns**(1 / tau)
-            nextIdx = random.choices(idxs, ns)[0]
+            nextIdx = random.choices(range(7), ns)[0]
         else:
             nextIdx = np.argmax(ns)
 
@@ -41,14 +40,11 @@ class MCTS:
 
     # Expand down into the tree recursively and find a leaf node.
     # When we find the leaf node, query the NN to initialize its children.
-    def search(self, node, net, depth_limit):
-
-        #print("SEARCH")
-        counter = 0
+    def search(self, node, net):
 
         stack = deque()
 
-        while node.has_children() and counter < depth_limit:
+        while node.has_children():
             a = node.bestAction()
             stack.append(a)
             node = a.nextState
@@ -67,12 +63,12 @@ class MCTS:
         #     # Get the features and upload them to the nn
 
         # Get the features and upload them to the nn for state evaluation
-        stateFeatures = utils.makeFeatures(node.state)
+        stateFeatures = node.state.features()
+        p, v = net(torch.tensor(stateFeatures).float())
 
-        p, v = net(torch.tensor(stateFeatures))
-
-        if node.state.outcome() is None:
-            p = utils.normalizeMPV(p, node.state)
+        if node.state.winner is None:
+            p = p.detach().numpy().squeeze() * node.state.validActionsMask()
+            p = p / np.linalg.norm(p)
             node.createChildren(p)
 
         while stack:

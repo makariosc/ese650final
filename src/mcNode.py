@@ -2,7 +2,6 @@ import collections
 import numpy as np
 import abc
 
-from utils import *
 from copy import deepcopy
 
 class MCNode:
@@ -14,25 +13,19 @@ class MCNode:
         self.state = state
         self.pActs = np.array([])
 
-        # Dictionary mapping move indices (see utils moveToIdx) to Children nodes and action probabilities.
-        self.children = {}
+        self.children = [None] * 7
 
     def createChildren(self, pActs):
         self.pActs = pActs
         pActIdxs = np.where(pActs)[0]
         for moveIndex in pActIdxs:
-            fromSquare = moveIndex // 73
-            if not self.state.piece_at(fromSquare):
-                continue
-            move = idxToMove(moveIndex, self.state)
-            if move in self.state.legal_moves:
-                self.children[moveIndex] = Action(MCNode(deepcopy(self.state)), pActs[moveIndex])
-                self.children[moveIndex].nextState.state.push(move)
+            self.children[moveIndex] = Action(MCNode(deepcopy(self.state)), pActs[moveIndex])
+            self.children[moveIndex].nextState.state.go(moveIndex)
 
 
     #Checks to see if the node is unexpanded (NOTE: Different from terminal nodes. No children in this case implies unexpanded children.)
     def has_children(self):
-        return len(self.children) > 0
+        return any(self.children)
 
     #Uses PUCT to find the Best Action.
     def bestAction(self):
@@ -42,28 +35,22 @@ class MCNode:
         c = 1
 
         #Calculates the N sum.
-        NList = [self.children[act].N for act in self.children.keys()]
+        NList = [self.children[act].N if self.children[act] is not None else 0 for act in range(len(self.children))]
         
         NSum = sum(NList)
         NSum  = np.sqrt(NSum)
 
-        def calcPuct(act):
+        for act in range(len(self.children)):
             edge = self.children[act]
 
-            U = c * edge.P * NSum / (1+edge.N)
-            Q = edge.Q
+            if edge is not None:
 
-            puctList[act] = Q+U
+                U = c * edge.P * NSum / (1+edge.N)
+                Q = edge.Q
 
-        list(map(calcPuct, self.children.keys()))
-
-        # for acts in self.children.keys():
-        #     edge = self.children[acts]
-        #
-        #     U = c * edge.P * NSum / (1+edge.N)
-        #     Q = edge.Q
-        #
-        #     puctList[acts] = Q+U
+                puctList[act] = Q+U
+            else:
+                puctList[act] = -float('inf')
 
         bestAct = max(puctList, key = puctList.get)
 
