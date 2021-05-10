@@ -3,8 +3,16 @@ import torch
 import copy
 import Arena
 
+from datetime import datetime
+
 
 if __name__ == "__main__":
+
+    datestring = datetime.today().strftime('%Y-%m-%d-%H-%M-%S')
+    logpath = f"./trainingLog{datestring}.txt"
+    logFile = open(logpath, "w")
+    logFile.write("Beginning training.")
+    logFile.close()
 
     import torch.multiprocessing as mp
     mp.set_start_method('spawn')
@@ -45,9 +53,17 @@ if __name__ == "__main__":
         player1.to('cpu')
         player1.eval()
 
-        if iters % 5 == 0:
+        if iters % 3 == 0:
             replaced, dataset = Arena.Arena(player2, player1, 100, tournament=True)
             if replaced:
+                logFile = open(logpath, "a")
+                logFile.write("Current NN replaced.")
+                logFile.close()
+
                 player2.load_state_dict(player1.state_dict())
                 player2.eval()
+            else:
+                logFile = open(logpath, "a")
+                logFile.write("Current NN not replaced.")
+                logFile.close()
         iters += 1
