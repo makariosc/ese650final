@@ -46,7 +46,7 @@ if __name__ == "__main__":
         player1.eval()
 
         if iters % 5 == 0:
-            replaced, dataset = Arena.Arena(player2, player1, 100)
+            replaced, dataset = Arena.Arena(player2, player1, 100, tournament=True)
             if replaced:
                 player2.load_state_dict(player1.state_dict())
                 player2.eval()

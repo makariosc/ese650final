@@ -35,7 +35,7 @@ class MCTS:
 
         # nextIdx should be an int from 0 to 64 x 73 - 1.
         # Use utils.idxToMove() to convert to a move.
-        return nextIdx, self.root.pActs
+        return nextIdx, ns
 
 
     # Expand down into the tree recursively and find a leaf node.
