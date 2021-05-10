@@ -39,14 +39,16 @@ class Connect4Game:
 
 
     def runGame(self):
-        print("Starting game.")
+#        print("Starting game.")
         while not self.game.finished:
+#            self.game.show()
             self.selectMove()
 
         if self.game.winner is None:
-            print(f"Terminated by draw.")
+#            print(f"Terminated by draw.")
+             pass
         else:
-            print(f"Terminated by win.")
+#            print(f"Terminated by win.")
 
             redVal = 1 if self.game.winner == Connect4.RED else -1
             yellowVal = 1 if self.game.winner == Connect4.YELLOW else -1

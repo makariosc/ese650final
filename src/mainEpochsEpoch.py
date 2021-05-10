@@ -32,7 +32,7 @@ if __name__ == "__main__":
     dataset = []
     while iters < numNewPlayers:
         # generate data
-        _, ds = Arena.Arena(player1, player1, 100)
+        _, ds = Arena.Arena(player1, player1, 25)
         dataset += ds
 
         print("Done generating dataset.")

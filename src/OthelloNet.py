@@ -60,12 +60,20 @@ class OthelloNNet(nn.Module):
 
         return F.log_softmax(pi, dim=1), torch.tanh(v)
 
+### Neural Net loss function implemented via PyTorch
+class AlphaLoss(torch.nn.Module):
+    def __init__(self):
+        super(AlphaLoss, self).__init__()
 
-def loss_pi(targets, outputs):
-    return -torch.sum(targets * outputs) / targets.size()[0]
+    def forward(self, y_value, value, y_policy, policy):
 
-def loss_v(targets, outputs):
-    return torch.sum((targets - outputs.view(-1)) ** 2) / targets.size()[0]
+
+        value_error = (value.flatten() - y_value.flatten()) ** 2
+        policy_error = torch.sum((policy* 
+                                (1e-8 + y_policy.float()).float()), 1)
+
+        total_error = (value_error.view(-1).float() - policy_error).mean()
+        return total_error
 
 def train(net, dataset, epoch_start=0, epoch_stop=20, cpu=0):
     """
@@ -74,6 +82,7 @@ def train(net, dataset, epoch_start=0, epoch_stop=20, cpu=0):
     torch.manual_seed(cpu)  # for debugging
     cuda = torch.cuda.is_available()  # use GPU if possible
     net.train()  # set NN to train
+    evaluator = AlphaLoss()
     optimizer = optim.Adam(net.parameters(), lr=3e-3)
     scheduler = optim.lr_scheduler.MultiStepLR(optimizer, milestones=[100, 200, 300, 400], gamma=0.2)
 
@@ -93,9 +102,7 @@ def train(net, dataset, epoch_start=0, epoch_stop=20, cpu=0):
                 state, policy, value = state.cuda().float(), policy.float().cuda(), value.cuda().float()
             optimizer.zero_grad()
             policy_pred, value_pred = net(state)
-            l_pi = loss_pi(policy, policy_pred)
-            l_v = loss_v(value, value_pred)
-            loss = l_pi + l_v
+            loss = evaluator(value, value_pred, policy, policy_pred)
             loss.backward()
             optimizer.step()
             total_loss += loss

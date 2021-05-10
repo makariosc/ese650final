@@ -2,6 +2,7 @@ from Connect4 import Connect4
 from Connect4Game import Connect4Game
 import OthelloNet
 import Arena
+import torch
 
 import multiprocessing as mp
 
@@ -13,10 +14,14 @@ import multiprocessing as mp
 if __name__ == "__main__":
 
     nn = OthelloNet.OthelloNNet()
+    nn.load_state_dict(torch.load("2021-05-10-08-49-50.pt"))
     nn.eval()
 
-    outcome, data = Arena.Arena(nn, nn)
-    print(outcome)
+    game = Connect4Game(nn, nn)
+    game.runGame()
+
+    #outcome, data = Arena.Arena(nn, nn, 1)
+    #print(outcome)
 
 
     #

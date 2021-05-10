@@ -1,11 +1,10 @@
 import Connect4
+import tqdm
 from Connect4Game import Connect4Game
 import random
 import torch
 from datetime import datetime
 
-import torch.multiprocessing as mp
-mp.set_sharing_strategy('file_system')
 
 def arenaWorker(nns):
     old, new = nns
@@ -36,18 +35,20 @@ def Arena(oldNN, newNN, numGames = 50):
     numOldWins = 0
     numNewWins = 0
 
-    pool = mp.Pool()
-    outcomes = pool.map(arenaWorker, [(oldNN, newNN)] * numGames)
+    outcomes = []
+    for i in tqdm.tqdm(range(numGames)):
+        outcomes.append(arenaWorker((oldNN, newNN)))
 
     ds = []
     for o in outcomes:
+        print(o)
         numOldWins += o[0]
         numNewWins += o[1]
         for example in o[2]:
             ds.append(example)
 
-    print(numOldWins)
-    print(numNewWins)
+    print(f"old wins: {numOldWins}")
+    print(f"new wins: {numNewWins}")
 
     if numOldWins + numNewWins > 0:
         if numNewWins / (numOldWins + numNewWins) >= 0.55:
