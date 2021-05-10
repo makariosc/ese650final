@@ -28,7 +28,7 @@ def arenaWorker(nns):
     oldResult = max(oldResult, 0)
     newResult = max(newResult, 0)
 
-    return oldResult, newResult
+    return oldResult, newResult, data[0] + data[1]
 
 def Arena(oldNN, newNN, numGames = 50):
 
@@ -38,9 +38,12 @@ def Arena(oldNN, newNN, numGames = 50):
     pool = mp.Pool()
     outcomes = pool.map(arenaWorker, [(oldNN, newNN)] * numGames)
 
+    ds = []
     for o in outcomes:
         numOldWins += o[0]
         numNewWins += o[1]
+        for example in o[2]:
+            ds.append(example)
 
     print(numOldWins)
     print(numNewWins)
@@ -51,12 +54,12 @@ def Arena(oldNN, newNN, numGames = 50):
             path = f"./{datetime.today().strftime('%Y-%m-%d-%H-%M-%S')}.pt"
             torch.save(newNN.state_dict(), path)
 
-            return True
+            return True, ds
         else:
-            return False
+            return False, ds
 
     else:
-        return False
+        return False, ds
 
 
 

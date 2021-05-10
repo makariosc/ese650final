@@ -2,25 +2,17 @@ from alphaZeroNet import ChessNet, train
 import utils
 import mcts
 import torch
-import chess
 import pickle
-from ChessGame import ChessGame
+from Connect4Game import Connect4Game
+import multiprocessing as mp
 
-import torch.multiprocessing as mp
-torch.multiprocessing.set_sharing_strategy('file_system')
-#torch.multiprocessing.set_start_method("spawn")
-
-def gameWorker(notUsed):
+def gameWorker(nn):
 
     print("Staring gameWorker")
     ds = []
 
-    nn = ChessNet()
-    nn.load_state_dict(torch.load("./genDataModel.pt"))
-    print("Loaded nn")
-
-    cg = ChessGame(nn, nn)
-    examples = cg.gameLoop()
+    cg = Connect4Game(nn, nn)
+    examples = cg.runGame()
 
     ds += examples[0]
     ds += examples[1]
@@ -52,33 +44,13 @@ def genData(model, num_games = 1000, saveFile = True):
 
     pool = mp.Pool()
 
-
-    torch.save(model.state_dict(), "./genDataModel.pt")
-    loadedModel = ChessNet()
-    loadedModel.load_state_dict(torch.load("./genDataModel.pt"))
-
     # List of list of lists
     # [[[1,2,3],[1,2,3]], [[1,2,3],[1,2,3]]]
-    outData = pool.imap_unordered(gameWorker, [loadedModel] * num_games)
-#    p1s = []
-#    for i in range(6):
-#        p = mp.Process(target = gameWorker)
-#        p.start()
-#        p1s.append(p)
-#    for p in p1s:
-#        p.join()
-
+    outData = pool.map(gameWorker, [(model)] * num_games)
 
     for d in outData:
         for example in d:
             ds.append(example)
-
-    # for i in range(num_games):
-    #     game = ChessGame(model, model) # start a new game with current model vs itself
-    #     data = game.gameLoop() # play the game
-    #
-    #     dataset += data[0]
-    #     dataset += data[1]
 
     # save dataset to a .txt fil
     if saveFile:
