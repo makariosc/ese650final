@@ -41,14 +41,13 @@ class MCTS:
 
     # Expand down into the tree recursively and find a leaf node.
     # When we find the leaf node, query the NN to initialize its children.
-    def search(self, node, net, depth_limit):
+    def search(self, node, net):
 
         #print("SEARCH")
-        counter = 0
 
         stack = deque()
 
-        while node.has_children() and counter < depth_limit:
+        while node.has_children():
             a = node.bestAction()
             stack.append(a)
             node = a.nextState
@@ -71,9 +70,19 @@ class MCTS:
 
         p, v = net(torch.tensor(stateFeatures))
 
+        
+
         if node.state.outcome() is None:
-            p = utils.normalizeMPV(p, node.state)
-            node.createChildren(p)
+            p, den = utils.normalizeMPV(p, node.state)
+
+            if den != 0:
+                probs = p /den
+                node.createChildren(probs)
+            else:
+                den = 1e-100
+                probs = p / den
+                node.createChildren(probs)
+            
 
         while stack:
             v = -v

@@ -30,7 +30,7 @@ class MCNode:
                 self.children[moveIndex].nextState.state.push(move)
 
 
-    #Checks to see if the node is unexpanded (NOTE: Different from terminal nodes. No children in this case implies unexpanded children.)
+    #Checks to see if the node is unexpanded 
     def has_children(self):
         return len(self.children) > 0
 

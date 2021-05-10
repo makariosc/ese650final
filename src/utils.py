@@ -240,5 +240,7 @@ def moveMask(board):
 def normalizeMPV(mv, board):
     mask = moveMask(board)
     maskedMV = mask * mv.detach().numpy().squeeze()
+    #den = max(1e-100, np.linalg.norm(maskedMV))
+    den = np.linalg.norm(maskedMV)
 
-    return maskedMV / np.linalg.norm(maskedMV)
+    return maskedMV, den

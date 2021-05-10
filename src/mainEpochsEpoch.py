@@ -11,7 +11,7 @@ if __name__ == "__main__":
     torch.multiprocessing.set_sharing_strategy('file_system')
     torch.multiprocessing.set_start_method("spawn")
 
-    fromScratch = False # flag if running with no saved NN
+    fromScratch = True # flag if running with no saved NN
 
     if fromScratch:
         # initialize some new network
@@ -43,7 +43,7 @@ if __name__ == "__main__":
 
         player1.to('cpu')
 
-        replaced, winner, games = ChessArena(player2, player1, 16)
+        replaced, winner, games = ChessArena(player2, player1, 1)
         if replaced:
             player1 = copy.deepcopy(winner)
             player2 = copy.deepcopy(winner)
