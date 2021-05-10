@@ -35,7 +35,6 @@ class ConvBlock(nn.Module):
     def __init__(self):
         super(ConvBlock, self).__init__()
         # XXX unused action_size object
-        self.action_size = 8*8*73 
         self.conv1 = nn.Conv2d(1, 256, 3, stride=1, padding=1)
         self.bn1 = nn.BatchNorm2d(256)
 
@@ -87,22 +86,22 @@ class OutBlock(nn.Module):
         super(OutBlock, self).__init__()
         self.conv = nn.Conv2d(256, 1, kernel_size=1) # value head
         self.bn = nn.BatchNorm2d(1)
-        self.fc1 = nn.Linear(8*8, 64)
+        self.fc1 = nn.Linear(7*6, 64)
         self.fc2 = nn.Linear(64, 1)
         
         self.conv1 = nn.Conv2d(256, 128, kernel_size=1) # policy head
         self.bn1 = nn.BatchNorm2d(128)
         self.logsoftmax = nn.LogSoftmax(dim=1)
-        self.fc = nn.Linear(8*8*128, 8*8*73)
+        self.fc = nn.Linear(7*6*128, 7)
     
     def forward(self,s):
         v = F.relu(self.bn(self.conv(s))) # value head
-        v = v.view(-1, 8*8)  # batch_size X channel X height X width
+        v = v.view(-1, 7*6)  # batch_size X channel X height X width
         v = F.relu(self.fc1(v))
         v = torch.tanh(self.fc2(v))
         
         p = F.relu(self.bn1(self.conv1(s))) # policy head
-        p = p.view(-1, 8*8*128)
+        p = p.view(-1, 7*6*128)
         p = self.fc(p)
         p = self.logsoftmax(p).exp()
         return p, v
