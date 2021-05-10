@@ -60,19 +60,12 @@ class OthelloNNet(nn.Module):
 
         return F.log_softmax(pi, dim=1), torch.tanh(v)
 
-class OthelloLoss(torch.nn.Module):
-    """
-    Loss function, mean squared error
-    """
-    def __init__(self):
-        super(OthelloLoss, self).__init__()
 
-    def forward(self, y_value, value, y_policy, policy):
-        value_error = (value - y_value) ** 2
-        policy_error = torch.sum((-policy*
-                                (1e-6 + y_policy.float()).float().log()), 1)
-        total_error = (value_error.view(-1).float() + policy_error).mean()
-        return total_error
+def loss_pi(targets, outputs):
+    return -torch.sum(targets * outputs) / targets.size()[0]
+
+def loss_v(targets, outputs):
+    return torch.sum((targets - outputs.view(-1)) ** 2) / targets.size()[0]
 
 def train(net, dataset, epoch_start=0, epoch_stop=20, cpu=0):
     """
@@ -81,7 +74,6 @@ def train(net, dataset, epoch_start=0, epoch_stop=20, cpu=0):
     torch.manual_seed(cpu)  # for debugging
     cuda = torch.cuda.is_available()  # use GPU if possible
     net.train()  # set NN to train
-    criterion = OthelloLoss()  # initialize loss function
     optimizer = optim.Adam(net.parameters(), lr=3e-3)
     scheduler = optim.lr_scheduler.MultiStepLR(optimizer, milestones=[100, 200, 300, 400], gamma=0.2)
 
@@ -100,12 +92,13 @@ def train(net, dataset, epoch_start=0, epoch_stop=20, cpu=0):
             if cuda:
                 state, policy, value = state.cuda().float(), policy.float().cuda(), value.cuda().float()
             optimizer.zero_grad()
-            policy_pred, value_pred = net(
-                state)  # policy_pred = torch.Size([batch, 4672]) value_pred = torch.Size([batch, 1])
-            loss = criterion(value_pred[:, 0], value, policy_pred, policy)
+            policy_pred, value_pred = net(state)
+            l_pi = loss_pi(policy, policy_pred)
+            l_v = loss_v(value, value_pred)
+            loss = l_pi + l_v
             loss.backward()
             optimizer.step()
-            total_loss += loss.item()
+            total_loss += loss
             print(i)
             if i % 10 == 9:  # print every 10 mini-batches of size = batch_size
                 print('Process ID: %d [Epoch: %d, %5d/ %d points] total loss per batch: %.3f' %
@@ -119,12 +112,4 @@ def train(net, dataset, epoch_start=0, epoch_stop=20, cpu=0):
             if abs(sum(losses_per_epoch[-4:-1]) / 3 - sum(losses_per_epoch[-16:-13]) / 3) <= 0.01:
                 break
 
-    fig = plt.figure()
-    ax = fig.add_subplot(222)
-    ax.scatter([e for e in range(1, epoch_stop + 1, 1)], losses_per_epoch)
-    ax.set_xlabel("Epoch")
-    ax.set_ylabel("Loss per batch")
-    ax.set_title("Loss vs Epoch")
     print('Finished Training')
-    plt.savefig(
-        os.path.join("./model_data/", "Loss_vs_Epoch_%s.png" % datetime.datetime.today().strftime('%Y-%m-%d-%H-%M-%S')))

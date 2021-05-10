@@ -5,6 +5,7 @@ import torch
 from datetime import datetime
 
 import torch.multiprocessing as mp
+mp.set_sharing_strategy('file_system')
 
 def arenaWorker(nns):
     old, new = nns
@@ -50,6 +51,7 @@ def Arena(oldNN, newNN, numGames = 50):
 
     if numOldWins + numNewWins > 0:
         if numNewWins / (numOldWins + numNewWins) >= 0.55:
+            print("replacing nn")
             # Save the nn to a file
             path = f"./{datetime.today().strftime('%Y-%m-%d-%H-%M-%S')}.pt"
             torch.save(newNN.state_dict(), path)

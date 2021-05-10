@@ -8,6 +8,7 @@ if __name__ == "__main__":
 
     import torch.multiprocessing as mp
     mp.set_start_method('spawn')
+    mp.set_sharing_strategy('file_system')
 
     fromScratch = True # flag if running with no saved NN
 
@@ -31,7 +32,7 @@ if __name__ == "__main__":
     dataset = []
     while iters < numNewPlayers:
         # generate data
-        _, ds = Arena.Arena(player1, player1, 25)
+        _, ds = Arena.Arena(player1, player1, 100)
         dataset += ds
 
         print("Done generating dataset.")
@@ -42,8 +43,9 @@ if __name__ == "__main__":
         train(player1, dataset)
 
         player1.to('cpu')
+        player1.eval()
 
-        replaced, dataset = Arena.Arena(player2, player1, 8)
+        replaced, dataset = Arena.Arena(player2, player1, 21)
         if replaced:
             player2.load_state_dict(player1.state_dict())
             player2.eval()
