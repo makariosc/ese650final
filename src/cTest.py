@@ -15,7 +15,7 @@ if __name__ == "__main__":
     nn = OthelloNet.OthelloNNet()
     nn.eval()
 
-    outcome = Arena.Arena(nn, nn)
+    outcome, data = Arena.Arena(nn, nn)
     print(outcome)
 
 
