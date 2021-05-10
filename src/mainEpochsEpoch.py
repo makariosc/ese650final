@@ -40,7 +40,7 @@ if __name__ == "__main__":
     dataset = []
     while True:
         # generate data
-        _, ds = Arena.Arena(player1, player1, 100)
+        _, ds, _ = Arena.Arena(player1, player1, 100)
         dataset += ds
 
         print("Done generating dataset.")
@@ -54,16 +54,20 @@ if __name__ == "__main__":
         player1.eval()
 
         if iters % 1 == 0:
-            replaced, dataset = Arena.Arena(player2, player1, 50, tournament=True)
+            logFile = open(logpath, "a")
+            replaced, dataset, scores = Arena.Arena(player2, player1, 50, tournament=True)
+            oldScore = scores[0]
+            newScore = scores[1]
             if replaced:
-                logFile = open(logpath, "a")
-                logFile.write(f"iteration {i}: Current NN replaced.")
-                logFile.close()
+                logFile.write(f"iteration {iters}: Current NN replaced.")
 
                 player2.load_state_dict(player1.state_dict())
                 player2.eval()
             else:
                 logFile = open(logpath, "a")
-                logFile.write(f"iteration {i}: Current NN not replaced.")
-                logFile.close()
+                logFile.write(f"iteration {iters}: Current NN not replaced.")
+
+            logFile.write(f"old score: {oldScore}, new score: {newScore}")
+
+            logFile.close()
         iters += 1

@@ -59,12 +59,12 @@ def Arena(oldNN, newNN, numGames = 50, tournament = False):
                 path = f"./bestCheckersNet{datetime.today().strftime('%Y-%m-%d-%H-%M-%S')}.pt"
             torch.save(newNN.state_dict(), path)
 
-            return True, ds
+            return True, ds, (numOldWins, numNewWins)
         else:
-            return False, ds
+            return False, ds, (numOldWins, numNewWins)
 
     else:
-        return False, ds
+        return False, ds, (numOldWins, numNewWins)
 
 
 
