@@ -85,7 +85,7 @@ class MCTS:
             a = stack.pop()
             a.N += 1
             a.W += v
-            a.Q = 0 if a.W == 0 else a.N / a.W
+            a.Q = 0 if a.W == 0 else a.W / a.N
 
         return -v
 
