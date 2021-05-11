@@ -55,13 +55,12 @@ class Connect4Game:
         else:
 #            print(f"Terminated by win.")
 
-            redVal = 1 if self.game.winner == Connect4.RED else -1
-            yellowVal = 1 if self.game.winner == Connect4.YELLOW else -1
+            v = 1 if self.game.winner == Connect4.RED else -1
 
             for sample in self.moves[Connect4.RED]:
-                sample[2] = redVal
+                sample[2] = v
             for sample in self.moves[Connect4.YELLOW]:
-                sample[2] = yellowVal
+                sample[2] = v
 
             return self.moves
 

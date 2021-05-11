@@ -139,7 +139,7 @@ class AlphaLoss(torch.nn.Module):
         total_error = (value_error.view(-1).float() + policy_error).mean()
         return total_error
     
-def train(net, dataset, epoch_start=0, epoch_stop=20, cpu=0):
+def train(net, dataset, epoch_start=0, epoch_stop=200, cpu=0):
     """
     Inputs of NN, training data
     """
@@ -171,7 +171,6 @@ def train(net, dataset, epoch_start=0, epoch_stop=20, cpu=0):
             loss.backward()
             optimizer.step()
             total_loss += loss.item()
-            print(i)
             if i % 10 == 9:    # print every 10 mini-batches of size = batch_size
                 print('Process ID: %d [Epoch: %d, %5d/ %d points] total loss per batch: %.3f' %
                       (os.getpid(), epoch + 1, (i + 1)*30, len(dataset), total_loss/10))
@@ -179,16 +178,5 @@ def train(net, dataset, epoch_start=0, epoch_stop=20, cpu=0):
                 print("Value:",value[0].item(),value_pred[0,0].item())
                 losses_per_batch.append(total_loss/10)
                 total_loss = 0.0
-        losses_per_epoch.append(sum(losses_per_batch)/len(losses_per_batch))
-        if len(losses_per_epoch) > 100:
-            if abs(sum(losses_per_epoch[-4:-1])/3-sum(losses_per_epoch[-16:-13])/3) <= 0.01:
-                break
 
-    fig = plt.figure()
-    ax = fig.add_subplot(222)
-    ax.scatter([e for e in range(1,epoch_stop+1,1)], losses_per_epoch)
-    ax.set_xlabel("Epoch")
-    ax.set_ylabel("Loss per batch")
-    ax.set_title("Loss vs Epoch")
     print('Finished Training')
-    plt.savefig(os.path.join("./model_data/", "Loss_vs_Epoch_%s.png" % datetime.datetime.today().strftime('%Y-%m-%d-%H-%M-%S')))
