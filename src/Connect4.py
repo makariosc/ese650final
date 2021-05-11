@@ -189,6 +189,6 @@ class Connect4:
                 if len(self.state[col]) > row:
                     f[col][row] = 2 * (self.state[col][row] - 0.5)
 
-        return f
+        return np.stack((f, np.ones_like(f) * self.turn))
 
 
