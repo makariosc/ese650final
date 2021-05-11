@@ -63,13 +63,19 @@ class MCTS:
         #     # Get the features and upload them to the nn
 
         # Get the features and upload them to the nn for state evaluation
-        stateFeatures = node.state.features()
-        p, v = net(torch.tensor(stateFeatures).float())
 
         if not node.state.finished:
+            stateFeatures = node.state.features()
+            p, v = net(torch.tensor(stateFeatures).float())
+
             p = p.detach().numpy().squeeze() * node.state.validActionsMask()
             p = p / np.linalg.norm(p)
             node.createChildren(p)
+        else:
+            if node.state.winner is None:
+                v = 0
+            else:
+                v = 2 * (int(self.state.winner) - 0.5)
 
         while stack:
             v = -v

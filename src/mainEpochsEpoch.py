@@ -11,7 +11,7 @@ if __name__ == "__main__":
     datestring = datetime.today().strftime('%Y-%m-%d-%H-%M-%S')
     logpath = f"./trainingLog{datestring}.txt"
     logFile = open(logpath, "w")
-    logFile.write("Beginning training.")
+    logFile.write("Beginning training.\n")
     logFile.close()
 
     import torch.multiprocessing as mp
@@ -59,15 +59,15 @@ if __name__ == "__main__":
             oldScore = scores[0]
             newScore = scores[1]
             if replaced:
-                logFile.write(f"iteration {iters}: Current NN replaced.")
+                logFile.write(f"iteration {iters}: Current NN replaced.\n")
 
                 player2.load_state_dict(player1.state_dict())
                 player2.eval()
             else:
                 logFile = open(logpath, "a")
-                logFile.write(f"iteration {iters}: Current NN not replaced.")
+                logFile.write(f"iteration {iters}: Current NN not replaced.\n")
 
-            logFile.write(f"old score: {oldScore}, new score: {newScore}")
+            logFile.write(f"old score: {oldScore}, new score: {newScore}\n")
 
             logFile.close()
         iters += 1
