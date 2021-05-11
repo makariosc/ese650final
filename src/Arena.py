@@ -38,6 +38,7 @@ def Arena(oldNN, newNN, numGames = 50, tournament = False):
     outcomes = []
     for i in tqdm.tqdm(range(numGames)):
         outcomes.append(arenaWorker((oldNN, newNN)))
+        print(outcomes[0][2][2])
 
     ds = []
     for o in outcomes:

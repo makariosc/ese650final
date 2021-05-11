@@ -35,7 +35,7 @@ class ConvBlock(nn.Module):
     def __init__(self):
         super(ConvBlock, self).__init__()
         # XXX unused action_size object
-        self.conv1 = nn.Conv2d(1, 256, 3, stride=1, padding=1)
+        self.conv1 = nn.Conv2d(2, 256, 3, stride=1, padding=1)
         self.bn1 = nn.BatchNorm2d(256)
 
     def forward(self, s):
