@@ -40,7 +40,7 @@ class ConvBlock(nn.Module):
 
     def forward(self, s):
         # TODO: CHANGE DIMENSION ACCORDING TO OUTPUT OF FEN CONVERSION
-        s = s.view(-1, 1, 7, 6)  # batch_size x channels x board_x x board_y
+        s = s.view(-1, 2, 7, 6)  # batch_size x channels x board_x x board_y
         # s = torch.tensor(s)
         s = self.conv1(s.float())
         s = self.bn1(s)
