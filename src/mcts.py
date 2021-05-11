@@ -75,7 +75,10 @@ class MCTS:
             if node.state.winner is None:
                 v = 0
             else:
-                v = 2 * (int(node.state.winner) - 0.5)
+                if node.state.winner != node.state.turn:
+                    v = -1
+                else:
+                    v = 1
 
         while stack:
             v = -v
