@@ -75,7 +75,7 @@ class MCTS:
             if node.state.winner is None:
                 v = 0
             else:
-                v = 2 * (int(self.state.winner) - 0.5)
+                v = 2 * (int(node.state.winner) - 0.5)
 
         while stack:
             v = -v
