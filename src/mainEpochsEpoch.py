@@ -40,7 +40,7 @@ if __name__ == "__main__":
     dataset = []
     while True:
         # generate data
-        _, ds, _ = Arena.Arena(player1, player1, 100)
+        _, ds, _ = Arena.Arena(player1, player1, 150)
         dataset += ds
 
         print("Done generating dataset.")
@@ -55,7 +55,7 @@ if __name__ == "__main__":
 
         if iters % 1 == 0:
             logFile = open(logpath, "a")
-            replaced, dataset, scores = Arena.Arena(player2, player1, 50, tournament=True)
+            replaced, dataset, scores = Arena.Arena(player2, player1, 100, tournament=True)
             oldScore = scores[0]
             newScore = scores[1]
             if replaced:
